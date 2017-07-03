@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        is-multidex="true"
+        jar="/Users/charlotte/Library/Android/sdk/extras/android/m2repository/com/android/support/support-annotations/25.3.1/support-annotations-25.3.1.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="bf8841d29fa39e077730e7a91222c2ce269fa7c9">
+        <dex dex="/Users/charlotte/Downloads/Movies-master/app/build/intermediates/transforms/dex/debug/folders/1000/10/support-annotations-25.3.1_0dd9acda8a3876f2e9a085ec2f73b661eb83e2d9/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/charlotte/.android/build-cache/22c13bab8baf795d38db9374f0bd985d01590f5f/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="95519720620b553f63afc789beba9ad582807f7c">
+        <dex dex="/Users/charlotte/Downloads/Movies-master/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_cee51baf93529576515d69a6c8f86e563d27a086/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/charlotte/.android/build-cache/31ec7c5a5874f41e9af5e70506e4d50c2966af84/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="052f5f840f21174a3ecf6544130194e2652cbb73">
+        <dex dex="/Users/charlotte/Downloads/Movies-master/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_bb84d9e94b8977376ccd156347b0af4d888ea8ca/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/charlotte/.android/build-cache/0a8f5ec1c780c81cc342a777f4ed600a9e7ad8c2/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="6ef31f1555bb4cc513ec8d52711365a8b89f3600">
+        <dex dex="/Users/charlotte/Downloads/Movies-master/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_53b960e13cc7102a3890aff9af4ab3376231fcdc/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/charlotte/.gradle/caches/modules-2/files-2.1/com.jakewharton/butterknife-annotations/8.6.0/48efa6f14074e1a6b16e02ac05eba3fc5c7c7ec8/butterknife-annotations-8.6.0.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="48efa6f14074e1a6b16e02ac05eba3fc5c7c7ec8">
+        <dex dex="/Users/charlotte/Downloads/Movies-master/app/build/intermediates/transforms/dex/debug/folders/1000/10/butterknife-annotations-8.6.0_32f3a3d772c22a42ee22bfe64f07f80e1ac8d06d/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/charlotte/.android/build-cache/ddda09bd38edf4f7ad45cc34fb4ee9a89841ddb7/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="be587097e648eabfb7f9eca23ab03369894e2d5d">
+        <dex dex="/Users/charlotte/Downloads/Movies-master/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_0fc5fb2dd85932a2531d2b2695eed513707be831/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/charlotte/.android/build-cache/b13939fee5cad97cb4db2b29674ff7b816399720/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="150252b33b00274cc868578ade018fda0d43a3eb">
+        <dex dex="/Users/charlotte/Downloads/Movies-master/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_ab89cf9189352ea35d627a3fd7ca468dcb1659b7/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/charlotte/.android/build-cache/6165830b439e075ac06b8029c4c96c416cd11f0d/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="45f697922e6f072daa12f8a2995dc77ab03c11da">
+        <dex dex="/Users/charlotte/Downloads/Movies-master/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_9367bd7798c246470df114e2fef3797bc4d2ebc8/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/charlotte/.android/build-cache/1b407d8f087f7b4452073f1ce33eb0f18dd4fb92/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="4a26a1154d053ab11aaf4c3967c42a4d66390991">
+        <dex dex="/Users/charlotte/Downloads/Movies-master/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_357b93a39ceda011d41a7748044f035695cae0f6/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/charlotte/Downloads/Movies-master/app/build/intermediates/incremental-runtime-classes/debug/instant-run.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="3be78ebc2706b2e1fe2f12d5726887a92d6c183b">
+        <dex dex="/Users/charlotte/Downloads/Movies-master/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run_77362094978542daeffa0d03e396cf9cdaf7b578/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/charlotte/.android/build-cache/109f16341cad698dd5c621b2bb812dd00e849d73/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="44ee06abb66da30f5855e6bf54574e64cdcd982a">
+        <dex dex="/Users/charlotte/Downloads/Movies-master/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_f4fbbe03a9dd8fcf69a71a2bee94d6c377df629a/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/charlotte/.android/build-cache/64f3a45f92d0d9abc0a9241f3dd390cfcd24e2f6/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="47635644d0d5c103c1dd8360549eb9ba3225c7d3">
+        <dex dex="/Users/charlotte/Downloads/Movies-master/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_1ee341e7a1d280e8068cef16fc2d5a832377939d/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/charlotte/.gradle/caches/modules-2/files-2.1/com.squareup.picasso/picasso/2.5.2/7446d06ec8d4f7ffcc53f1da37c95f200dcb9387/picasso-2.5.2.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="7446d06ec8d4f7ffcc53f1da37c95f200dcb9387">
+        <dex dex="/Users/charlotte/Downloads/Movies-master/app/build/intermediates/transforms/dex/debug/folders/1000/10/picasso-2.5.2_1d1e5278b6179f2aab8928e5dbefbb7f4c373a62/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/charlotte/.android/build-cache/28d1cc1539127a06f19fd52dbb1e3eab39087eb0/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="536228b2496030d983d01856aa56b4d71b57d0db">
+        <dex dex="/Users/charlotte/Downloads/Movies-master/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_f1283a195cb27934781d44a8323c6d35a0c2c5b7/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/charlotte/Downloads/Movies-master/app/build/intermediates/incremental-classes/debug/instant-run-bootstrap.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="649478319e9b75d8b54820c9209063e57443c814">
+        <dex dex="/Users/charlotte/Downloads/Movies-master/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run-bootstrap_36b54b398b12001e47737196502b714bc7a5bd71/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/charlotte/.android/build-cache/7b387c20894b37f297acbdb381feecd6b37e7463/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="da27a32db6af8954ee8061537c7d476fcb1df46f">
+        <dex dex="/Users/charlotte/Downloads/Movies-master/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_cbc0404478087809b2afef2c42bba67b19c3959c/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/charlotte/.android/build-cache/0b7fe95f704c7e714a6aa5442bb7c26a4bf8aed0/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="efb8cb62d47d157c29d1521daac7eefd4cb881ee">
+        <dex dex="/Users/charlotte/Downloads/Movies-master/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_ee74fc20e2674b3ef4c0496f8c55f18385f46c8c/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/charlotte/Library/Android/sdk/extras/m2repository/com/android/support/constraint/constraint-layout-solver/1.0.2/constraint-layout-solver-1.0.2.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="b9cd8fc6bd15cb915735d34535db30ece0c44603">
+        <dex dex="/Users/charlotte/Downloads/Movies-master/app/build/intermediates/transforms/dex/debug/folders/1000/10/constraint-layout-solver-1.0.2_b3727a46b7b9e5b13ef9d85dc62b3fc1fbc66bb2/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/charlotte/.android/build-cache/35f90cbb8a66f8334ae72aa394ce3e1af3ff54db/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="d7c42c80f6509b9ea4db28ca7859ffae08ec5741">
+        <dex dex="/Users/charlotte/Downloads/Movies-master/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_b3e20f5cfb41d39d99da84f1edfd5655f56a4fc4/classes.dex" />
+    </item>
+
+</items>
