@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#333"
+    android:background="#afafaf"
     tools:context="com.example.android.movieapp2.MovieDetailFragment">
 
     <!-- TODO: Update blank fragment layout -->
@@ -13,16 +13,13 @@
         android:layout_width="180dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
+        android:layout_marginLeft="0dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:background="@color/colorPrimaryDark"
         android:scaleType="fitXY"
         android:src="@drawable/placeholder_detail_view"
-        app:layout_constraintHorizontal_bias="0.042"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/movie_title" />
 
     <TextView
@@ -31,66 +28,75 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:gravity="center_horizontal"
         android:textColor="#fff"
-        tools:text="Cars 3"
+        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginLeft="8dp"
-        app:layout_constraintLeft_toLeftOf="parent" />
+        tools:text="Cars 3" />
 
     <TextView
         android:id="@+id/release_year"
         android:layout_width="42dp"
         android:layout_height="16dp"
-        tools:text="(2017)"
-        android:layout_marginRight="8dp"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toRightOf="@+id/poster_detail_view"
+        android:layout_marginEnd="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="-8dp"
-        app:layout_constraintTop_toBottomOf="@+id/ratingBar" />
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintLeft_toRightOf="@+id/poster_detail_view"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ratingBar"
+        tools:text="(2017)" />
 
     <RatingBar
         android:id="@+id/ratingBar"
-        android:layout_width="0dp"
-        android:layout_height="49dp"
-        android:isIndicator="true"
-        android:rating="3.5"
-        android:scaleX=".5"
-        android:scaleY=".5"
-        android:layout_marginRight="8dp"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toRightOf="@+id/poster_detail_view"
+        style="@style/Widget.AppCompat.RatingBar.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
         android:layout_marginLeft="8dp"
-        app:layout_constraintHorizontal_bias="0.0"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="0dp"
-        app:layout_constraintTop_toBottomOf="@+id/movie_title" />
+        android:isIndicator="true"
+
+        android:numStars="5"
+        android:rating="3.5"
+        app:layout_constraintLeft_toRightOf="@+id/poster_detail_view"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/poster_detail_view" />
 
 
     <ScrollView
         android:layout_width="0dp"
-        android:layout_height="172dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="0dp"
         android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:scrollbars="vertical"
         app:layout_constraintBottom_toBottomOf="@+id/poster_detail_view"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toRightOf="@+id/poster_detail_view"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="0dp"
-        app:layout_constraintTop_toBottomOf="@+id/release_year"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintVertical_bias="0.545">
+        app:layout_constraintLeft_toRightOf="@+id/poster_detail_view"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/release_year">
+
 
         <TextView
             android:id="@+id/plot"
-            android:layout_gravity="top"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            tools:layout_editor_absoluteX="8dp"
+            tools:layout_editor_absoluteY="0dp"
             tools:text="Picasso and Glide An extremely common problem that Android developers face is the proper use of images in their application. Including many high quality images will drastically increase your apk size, while downloading images over the network comes with memory consumption and network availability problems. Picasso and Glide are both very robust libraries that facilitate the loading, caching and displaying of Images. They include tons of amazing features, such as the ability to include placeholder images and local caching, so almost every application that includes images uses one of these. Check out the documentation on Picasso and Glide." />
     </ScrollView>
+
 </android.support.constraint.ConstraintLayout>

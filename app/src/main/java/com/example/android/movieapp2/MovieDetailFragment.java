@@ -166,6 +166,7 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
         // rating bar
         int rateCol = data.getColumnIndex(MovieContract.MovieEntry.MOVIE_RATING);
         float rating = (float) (data.getDouble(rateCol) / 2);
+        Log.i(LOG_TAG, "Rating: " + rating);
         ratingBar.setRating(rating);
 
 
