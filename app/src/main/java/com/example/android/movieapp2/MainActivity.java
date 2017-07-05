@@ -51,8 +51,6 @@ MovieAdapter.ListItemClickListener{
 
 
         // intitiate and/or display data
-        Log.w(LOG_TAG, "1a. sIsInitialized = " + SyncUtils.sIsInitialed);
-        Log.w(LOG_TAG, "1b. isInitialized() = " + SyncUtils.isInitialized());
         if (SyncUtils.isInitialized()) {
             displayData();
         } else {
@@ -73,14 +71,9 @@ MovieAdapter.ListItemClickListener{
             recyclerView.setLayoutManager(new GridLayoutManager(this, LANDSCAPE_COLUMNS));
         }
 
-
-//        Log.i(LOG_TAG, "width and height: " + imageWidth + " - " + imageHeight);
         mAdapter = new MovieAdapter(this, imageWidth, imageHeight, this);
         recyclerView.setAdapter(mAdapter);
         recyclerView.setHasFixedSize(true);
-
-//        Log.i(LOG_TAG, "Is Initiated = " + SyncUtils.isInitialized());
-
     }
 
 
@@ -91,12 +84,9 @@ MovieAdapter.ListItemClickListener{
     }
 
     private void displayData() {
-        Log.i(LOG_TAG,"4. Display Data Test");
         if(getSupportLoaderManager().getLoader(LOADER_ID)!=null){
-            Log.i(LOG_TAG,"Restart Loader");
             getSupportLoaderManager().restartLoader(LOADER_ID, null, this);
         } else {
-            Log.i(LOG_TAG,"Init Loader");
             getSupportLoaderManager().initLoader(LOADER_ID, null, this);
         }
     }
@@ -112,7 +102,6 @@ MovieAdapter.ListItemClickListener{
         int id = item.getItemId();
         switch(id){
             case R.id.action_settings:
-                Log.w(LOG_TAG,"Settings intent ack");
                 startActivity(new Intent(this, SettingsActivity.class));
                 return true;
             default:
@@ -122,7 +111,6 @@ MovieAdapter.ListItemClickListener{
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        Log.i(LOG_TAG, "onCreateLoader Test");
         return new CursorLoader(this,
                 MovieContract.MovieEntry.MOVIE_TABLE_URI, null, null, null, null);
     }
@@ -130,9 +118,6 @@ MovieAdapter.ListItemClickListener{
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         data.moveToFirst();
-        int col = data.getColumnIndex(MovieContract.MovieEntry.MOVIE_TITLE);
-//        String title = data.getString(col);
-//        Log.w(LOG_TAG, "Load Finished - Cursor title: " + title); // check movie title of first movie item in cursor
         mAdapter.swapCursor(data);
 
     }
@@ -176,10 +161,8 @@ MovieAdapter.ListItemClickListener{
 
     @Override
     public void onListItemClick(int clickedItemIndex) {
-        Toast.makeText(this, "Index Number: " + clickedItemIndex, Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(this, DetailsActivity.class);
         String movieID = mAdapter.getSelectedMovieDbID(clickedItemIndex);
-        Log.i(LOG_TAG, "adapter itemID = " + movieID);
         intent.putExtra("movieId", movieID);
         startActivity(intent);
     }
