@@ -61,8 +61,6 @@ public final class JsonUtils {
             // add ContentValues object to ContentValues[]
             contentValues[i] = cv;
         }
-        String s = contentValues[0].getAsString(MovieEntry.MOVIE_TITLE);
-        Log.w("JsonParse", "Title: " + s);
         return contentValues;
     }
 }

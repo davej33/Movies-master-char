@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.LoaderManager;
@@ -25,13 +26,15 @@ import com.example.android.movieapp2.sync.SyncUtils;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>,
         SharedPreferences.OnSharedPreferenceChangeListener,
-MovieAdapter.ListItemClickListener{
+        MovieAdapter.ListItemClickListener,
+       MovieDetailFragment.OnFragmentInteractionListener{
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
     private MovieAdapter mAdapter;
     private static final int LANDSCAPE_COLUMNS = 3;
     private static final int PORTRAIT_COLUMNS = 2;
     private static final int LOADER_ID = 300;
+    private boolean mFavoriteChanged = false;
 
     // TODO: fetch more results when scrolled to end
 
@@ -148,6 +151,16 @@ MovieAdapter.ListItemClickListener{
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        if(mFavoriteChanged){
+            displayData();
+            mFavoriteChanged = false;
+        }
+
+    }
+
+    @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         Log.w(LOG_TAG, "SP-Changed");
         SyncUtils.syncImmediately(this);
@@ -162,9 +175,16 @@ MovieAdapter.ListItemClickListener{
     @Override
     public void onListItemClick(int clickedItemIndex) {
         Intent intent = new Intent(this, DetailsActivity.class);
-        String movieID = mAdapter.getSelectedMovieDbID(clickedItemIndex);
-        intent.putExtra("movieId", movieID);
+        String localID = mAdapter.getSelectedMovieLocalID(clickedItemIndex);
+        String sourceID = mAdapter.getSelectedMovieSourceID(clickedItemIndex);
+        intent.putExtra(getString(R.string.local_id_key), localID);
+        intent.putExtra(getString(R.string.source_id_key), sourceID);
         startActivity(intent);
     }
 
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+        Log.i(LOG_TAG, "onFragInteraction Test / URI : " + uri);
+        mFavoriteChanged = true;
+    }
 }

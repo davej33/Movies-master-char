@@ -6,13 +6,12 @@
 
     <!-- Strings related to Settings -->
 
-    <!-- Example General settings -->
+    <!-- General settings -->
     <string name="pref_header_general">General</string>
     <string name="pref_header_settings">Settings</string>
 
-    <!-- Example settings for Data & Sync -->
+    <!-- Data & Sync settings  -->
     <string name="pref_header_data_sync">Data &amp; sync</string>
-
 
     <!-- Sort Preference  -->
     <string name="pref_sort_label">Sort By</string>
@@ -25,9 +24,12 @@
     <string name="pref_sort_rating_label">Highest Rating</string>
     <string name="pref_sort_rating_value">vote_average.desc</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!-- Favorites Preference -->
+    <string name="pref_fav_label">Favorites</string>
+    <string name="pref_fav_key">favorites</string>
 
-    <!-- Sort Preference End -->
+    <!-- Detail Activity Extras -->
+    <string name="local_id_key">local_id</string>
+    <string name="source_id_key">source_id</string>
 
 </resources>

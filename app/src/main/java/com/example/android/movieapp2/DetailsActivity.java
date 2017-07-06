@@ -14,14 +14,15 @@ public class DetailsActivity extends AppCompatActivity implements MovieDetailFra
         setContentView(R.layout.activity_details);
 
         Intent intent = getIntent();
-        String id = intent.getStringExtra("movieId");
-        Log.i("DetailsActivity", "MovieID from Intent: " + id);
+        String localID = intent.getStringExtra(getString(R.string.local_id_key));
+        String sourceID = intent.getStringExtra(getString(R.string.source_id_key));
         getSupportFragmentManager().beginTransaction()
-                .add(R.id.detail_container, new MovieDetailFragment().newInstance(id)).commit();
+                .add(R.id.detail_container, new MovieDetailFragment().newInstance(localID, sourceID)).commit();
     }
 
     @Override
     public void onFragmentInteraction(Uri uri) {
+        MainActivity.onDestroy();
     Log.i("DetailActivity", "Fragment Interaction Uri: " + uri);
     }
 }

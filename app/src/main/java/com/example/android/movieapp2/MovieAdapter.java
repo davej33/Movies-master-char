@@ -111,10 +111,14 @@ public final class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieV
         notifyDataSetChanged();
     }
 
-    public String getSelectedMovieDbID(int cursorIndexNum){
+    public String getSelectedMovieLocalID(int cursorIndexNum){
         mCursor.moveToPosition(cursorIndexNum);
-
         int idCol = mCursor.getColumnIndex(MovieContract.MovieEntry._ID);
+        return mCursor.getString(idCol);
+    }
+    public String getSelectedMovieSourceID(int cursorIndexNum){
+        mCursor.moveToPosition(cursorIndexNum);
+        int idCol = mCursor.getColumnIndex(MovieContract.MovieEntry.MOVIE_TMDB_ID);
         return mCursor.getString(idCol);
     }
 

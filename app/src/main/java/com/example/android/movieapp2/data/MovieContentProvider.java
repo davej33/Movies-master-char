@@ -79,7 +79,7 @@ public final class MovieContentProvider extends ContentProvider {
                 cursor = db.query(MovieContract.MovieEntry.MOVIE_TABLE, null, null, null, null, null, null);
                 break;
             case MOVIE_ITEM_CODE:
-                selection = MovieContract.MovieEntry.MOVIE_ID + "=?";
+                selection = MovieContract.MovieEntry._ID + "=?";
                 selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
                 cursor = db.query(MovieContract.MovieEntry.MOVIE_TABLE, projection, selection, selectionArgs,
                         null, null, sortOrder);
@@ -111,7 +111,7 @@ public final class MovieContentProvider extends ContentProvider {
                 rowsDeleted = db.delete(MovieContract.MovieEntry.MOVIE_TABLE, selection, selectionArgs);
                 break;
             case MOVIE_ITEM_CODE:
-                selection = MovieContract.MovieEntry.MOVIE_ID + "=?";
+                selection = MovieContract.MovieEntry._ID + "=?";
                 selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
                 rowsDeleted = db.delete(MovieContract.MovieEntry.MOVIE_TABLE, selection, selectionArgs);
                 break;
