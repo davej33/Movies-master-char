@@ -11,6 +11,7 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 
 import com.example.android.movieapp2.data.MovieContract;
+import com.example.android.movieapp2.utils.FavoriteUtils;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
 
@@ -81,10 +82,11 @@ public final class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieV
                 .centerCrop()
                 .into(holder.poster);
 
+        int titleColId = mCursor.getColumnIndex(MovieContract.MovieEntry.MOVIE_TITLE);
+        String title = mCursor.getString(titleColId);
+
         // get favorite state and set display
-        int favoriteCol = mCursor.getColumnIndex(MovieContract.MovieEntry.MOVIE_FAVORITE);
-        Integer isFavorite = mCursor.getInt(favoriteCol);
-        if (isFavorite == 1) {
+        if (FavoriteUtils.checkFavorite(mContext, title)) {
             holder.favoriteCheckBox.setChecked(true);
         } else {
             holder.favoriteCheckBox.setChecked(false);
@@ -116,10 +118,10 @@ public final class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieV
         int idCol = mCursor.getColumnIndex(MovieContract.MovieEntry._ID);
         return mCursor.getString(idCol);
     }
-    public String getSelectedMovieSourceID(int cursorIndexNum){
+    public String getSelectedMovieTitle(int cursorIndexNum){
         mCursor.moveToPosition(cursorIndexNum);
-        int idCol = mCursor.getColumnIndex(MovieContract.MovieEntry.MOVIE_TMDB_ID);
-        return mCursor.getString(idCol);
+        int titleCol = mCursor.getColumnIndex(MovieContract.MovieEntry.MOVIE_TITLE);
+        return mCursor.getString(titleCol);
     }
 
     public class MovieViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{

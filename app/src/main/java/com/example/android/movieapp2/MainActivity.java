@@ -175,8 +175,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         super.onDestroy();
         PreferenceManager.getDefaultSharedPreferences(this)
                 .unregisterOnSharedPreferenceChangeListener(mListener);
-
-
     }
 
     @Override
@@ -185,9 +183,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         Log.i(LOG_TAG,"onPause run");
     }
 
-    public static void setmFavoriteChanged(boolean s) {
-        mFavoriteChanged = s;
+    public static void setmFavoriteChanged(boolean b) {
+        mFavoriteChanged = b;
     }
+
 
     //    @Override
 //    protected void onResume() {
@@ -250,9 +249,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public void onListItemClick(int clickedItemIndex) {
         Intent intent = new Intent(this, DetailsActivity.class);
         String localID = mAdapter.getSelectedMovieLocalID(clickedItemIndex);
-        String sourceID = mAdapter.getSelectedMovieSourceID(clickedItemIndex);
+        String sourceID = mAdapter.getSelectedMovieTitle(clickedItemIndex);
         intent.putExtra(getString(R.string.local_id_key), localID);
-        intent.putExtra(getString(R.string.source_id_key), sourceID);
+        intent.putExtra(getString(R.string.movie_title_key), sourceID);
         startActivity(intent);
     }
 

@@ -30,6 +30,6 @@
 
     <!-- Detail Activity Extras -->
     <string name="local_id_key">local_id</string>
-    <string name="source_id_key">source_id</string>
+    <string name="movie_title_key">title</string>
 
 </resources>

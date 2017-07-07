@@ -24,6 +24,7 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.example.android.movieapp2.data.MovieContract;
+import com.example.android.movieapp2.utils.FavoriteUtils;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
 
@@ -51,16 +52,15 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
     private static final String LOG_TAG = MovieDetailFragment.class.getSimpleName();
     // the fragment initialization parameters
     private final String ARG_LOCAL_ID = "localID";
-    private final String ARG_SOURCE_ID = "sourceID";
+    private final String ARG_MOVIE_TITLE = "title";
     private static final int DETAIL_LOADER_ID = 111;
     private String mLocalID;
-    private String mSourceID;
+    private String mTitle;
     private Uri mSingleMovieUri;
-    private SharedPreferences mPref;
+    private static SharedPreferences mPref;
     private SharedPreferences.OnSharedPreferenceChangeListener mPreferenceListener;
     private int mInitFavCount;
-    private int mEndFavCount;
-    private Set<String> mSetList;
+    private static Set<String> mSetList;
 
     // views
     private TextView mTitleV;
@@ -84,11 +84,11 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
      * @return A new instance of fragment MovieDetailFragment.
      */
 
-    public MovieDetailFragment newInstance(String localDbID, String sourceID) {
+    public MovieDetailFragment newInstance(String localDbID, String title) {
         MovieDetailFragment fragment = new MovieDetailFragment();
         Bundle args = new Bundle();
         args.putString(ARG_LOCAL_ID, localDbID);
-        args.putString(ARG_SOURCE_ID, sourceID);
+        args.putString(ARG_MOVIE_TITLE, title);
         fragment.setArguments(args);
         return fragment;
     }
@@ -98,18 +98,11 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mLocalID = getArguments().getString(ARG_LOCAL_ID);
-            mSourceID = getArguments().getString(ARG_SOURCE_ID);
+            mTitle = getArguments().getString(ARG_MOVIE_TITLE);
         }
 
         // SharedPreferences and Listener
         mPref = PreferenceManager.getDefaultSharedPreferences(getContext()); // instantiate SharedPreferences
-        if (savedInstanceState != null) {
-            mInitFavCount = savedInstanceState.getInt("initFavCount");
-            Log.i(LOG_TAG,"SavedInstanceState Fav Count: " + mInitFavCount);
-        } else {
-            setInitFavCount(); // set initial count of favorited movies stored in SharedPref
-            Log.i(LOG_TAG,"new Fav Count: " + mInitFavCount);
-        }
         mPreferenceListener = new SharedPreferences.OnSharedPreferenceChangeListener() { // instantiate SharePrefListener
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
@@ -144,80 +137,24 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
         mFavorite_button.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, final boolean b) {
-                mUpdatedFavoriteState = (b) ? 1 : 0;
-                final Thread updateFavState = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        String[] selArgs = {mLocalID};
-                        ContentValues cv = new ContentValues(); // new ContentValue object
-                        cv.put(MovieContract.MovieEntry.MOVIE_FAVORITE, mUpdatedFavoriteState); // add new favorite state to CV
-                        int check = getContext().getContentResolver().update(mSingleMovieUri, cv, MovieContract.MovieEntry._ID + "=?",
-                                selArgs); // update DB with new state
-                        if (check == 1) { // if update is successful...
-                            editFavoritesArray(b); // update the SharedPreference array
-                            Toast.makeText(getContext(), "Favorites updated", Toast.LENGTH_SHORT).show();
-                            //TODO: Doesn't update MainActivity
-                        } else {
-                            Toast.makeText(getContext(), "Error updating favorites", Toast.LENGTH_SHORT).show();
-                        }
+                if(b){
+                    FavoriteUtils.addFavorite(getContext(), mTitle);
+                } else {
+                    try {
+                        FavoriteUtils.removeFavorite(getContext(), mTitle);
+                    } catch (Exception e) {
+                        Log.e(LOG_TAG,"error removing favorite: " + mTitle);
                     }
-                });
-                updateFavState.run();
+                }
+
+
             }
         });
         // Inflate the layout for this fragment
         return view;
     }
 
-    private void setInitFavCount() {
 
-        mSetList = mPref.getStringSet(getString(R.string.pref_fav_key), null); // get Favorites Set<> from SP
-        if(mSetList == null){ // set number of favorited movies
-            mInitFavCount = 0;
-        } else {
-            mInitFavCount = mSetList.size();
-        }
-        Log.i(LOG_TAG, "setInitFavCount run: " + mInitFavCount);
-    }
-
-    private void editFavoritesArray(boolean state) {
-//        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getContext()); // get SharedPreference object
-//        Set<String> setList = pref.getStringSet(getString(R.string.pref_fav_key), null); // get Favorites Set<> from SP
-        Log.i(LOG_TAG, "SourceID: " + mSourceID);
-        if (mSetList == null) {
-            mSetList = new HashSet<>();
-            mSetList.add(mSourceID);
-            Log.i(LOG_TAG, "T 1 fav list size: " + mSetList.size());
-        }
-        if (state) {
-            mSetList.add(mSourceID); // add new movie to favorite ArrayList
-            Log.i(LOG_TAG, "T 2 fav added: " + mSetList.size());
-        } else {
-            Iterator<String> iterator = mSetList.iterator();
-            while (iterator.hasNext()) {
-                if (iterator.next().equals(mSourceID)) {
-                    iterator.remove();
-                }
-            }
-            Log.i(LOG_TAG, "T 3 fav removed: " + mSetList.size());
-        }
-        SharedPreferences.Editor editor = mPref.edit(); // get SharedPreference Editor object
-        editor.remove(getString(R.string.pref_fav_key)); // remove SharedPreference favorite Set
-        editor.putStringSet(getString(R.string.pref_fav_key), mSetList); // put updated ArrayList in SharedPreferences as Set
-        editor.apply();
-        testUpdatedPref();
-    }
-
-
-    private void testUpdatedPref() {
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getContext());
-        Set<String> setList = pref.getStringSet(getString(R.string.pref_fav_key), null); // get Favorites Set<> from SP
-        Log.i(LOG_TAG, "Iterate: " + setList.size());
-        Iterator<String> iterator = setList.iterator();
-        while (iterator.hasNext()) {
-            Log.i(LOG_TAG, "Iterate: " + iterator.next());
-        }
-    }
 
 
     // initialize or restart loader
@@ -263,14 +200,12 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        Log.i(LOG_TAG, "Details Cursor Count: " + data.getCount());
         data.moveToFirst();
 
         // title
         int titleColId = data.getColumnIndex(MovieContract.MovieEntry.MOVIE_TITLE);
         String title = data.getString(titleColId);
         mTitleV.setText(title);
-        Log.i("DetailFrag", "Title: " + title);
 
         // release date
         int releaseDateCol = data.getColumnIndex(MovieContract.MovieEntry.MOVIE_RELEASE_DATE);
@@ -289,12 +224,10 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
         mRatingBar.setRating(rating);
 
         // favorite state
-        int favCol = data.getColumnIndex(MovieContract.MovieEntry.MOVIE_FAVORITE);
-        int favState = data.getInt(favCol);
-        if (favState == 0) {
-            mFavorite_button.setChecked(false);
-        } else {
+        if (FavoriteUtils.checkFavorite(getContext(), title)) {
             mFavorite_button.setChecked(true);
+        } else {
+            mFavorite_button.setChecked(false);
         }
 
         // poster
@@ -316,33 +249,16 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        Log.i(LOG_TAG,"FavCount onDestroyView: " + mInitFavCount);
-    }
-
-    @Override
     public void onDestroy() {
-        super.onDestroy();
-        if(mInitFavCount != mSetList.size()){
-            MainActivity.setmFavoriteChanged(true);
-        }
-        Log.i(LOG_TAG,"FavCount onDestroy: " + mInitFavCount);
         PreferenceManager.getDefaultSharedPreferences(getContext())
                 .unregisterOnSharedPreferenceChangeListener(mPreferenceListener);
+        super.onDestroy();
     }
-
-//    @Override
-//    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
-//        Log.i(LOG_TAG, "DetFrag SP Changed %%%%%%%%%%%%%%%%: " );
-//    }
 
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt("initFavCount", mInitFavCount);
-        Log.i(LOG_TAG,"Outstate Count: " + mInitFavCount);
     }
 
     /**

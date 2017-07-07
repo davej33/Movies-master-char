@@ -15,9 +15,9 @@ public class DetailsActivity extends AppCompatActivity implements MovieDetailFra
 
         Intent intent = getIntent();
         String localID = intent.getStringExtra(getString(R.string.local_id_key));
-        String sourceID = intent.getStringExtra(getString(R.string.source_id_key));
+        String title = intent.getStringExtra(getString(R.string.movie_title_key));
         getSupportFragmentManager().beginTransaction()
-                .add(R.id.detail_container, new MovieDetailFragment().newInstance(localID, sourceID)).commit();
+                .add(R.id.detail_container, new MovieDetailFragment().newInstance(localID, title)).commit();
     }
 
     @Override
