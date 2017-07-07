@@ -22,7 +22,6 @@ public class DetailsActivity extends AppCompatActivity implements MovieDetailFra
 
     @Override
     public void onFragmentInteraction(Uri uri) {
-        MainActivity.onDestroy();
     Log.i("DetailActivity", "Fragment Interaction Uri: " + uri);
     }
 }
