@@ -12,8 +12,7 @@
         android:id="@+id/poster_detail_view"
         android:layout_width="180dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginLeft="0dp"
+        android:layout_marginLeft="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:background="@color/colorPrimaryDark"
@@ -25,7 +24,7 @@
     <TextView
         android:id="@+id/movie_title"
         style="@style/Base.TextAppearance.AppCompat.Title"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginLeft="8dp"
@@ -41,15 +40,15 @@
 
     <TextView
         android:id="@+id/release_year"
-        android:layout_width="42dp"
-        android:layout_height="16dp"
+        android:layout_width="43dp"
+        android:layout_height="15dp"
         android:layout_marginEnd="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintLeft_toRightOf="@+id/poster_detail_view"
-        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginTop="11dp"
+        app:layout_constraintLeft_toLeftOf="@+id/ratingBar"
+        app:layout_constraintRight_toRightOf="@+id/ratingBar"
         app:layout_constraintTop_toBottomOf="@+id/ratingBar"
         tools:text="(2017)" />
 
@@ -62,9 +61,8 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="0dp"
-        android:isIndicator="true"
 
+        android:isIndicator="true"
         android:numStars="5"
         android:rating="3.5"
         app:layout_constraintLeft_toRightOf="@+id/poster_detail_view"
@@ -73,21 +71,21 @@
 
 
     <ScrollView
+        android:id="@+id/plot_scrollView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginBottom="0dp"
+        android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:scrollbars="vertical"
-        app:layout_constraintBottom_toBottomOf="@+id/poster_detail_view"
+        app:layout_constraintBottom_toTopOf="@+id/favorite_checkbox_view"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toRightOf="@+id/poster_detail_view"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/release_year">
-
 
         <TextView
             android:id="@+id/plot"
@@ -95,8 +93,26 @@
             android:layout_height="wrap_content"
             android:layout_gravity="top"
             tools:layout_editor_absoluteX="8dp"
-            tools:layout_editor_absoluteY="0dp"
+            tools:layout_editor_absoluteY="131dp"
             tools:text="Picasso and Glide An extremely common problem that Android developers face is the proper use of images in their application. Including many high quality images will drastically increase your apk size, while downloading images over the network comes with memory consumption and network availability problems. Picasso and Glide are both very robust libraries that facilitate the loading, caching and displaying of Images. They include tons of amazing features, such as the ability to include placeholder images and local caching, so almost every application that includes images uses one of these. Check out the documentation on Picasso and Glide." />
+
+
     </ScrollView>
+
+    <ToggleButton
+        android:id="@+id/favorite_checkbox_view"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:background="@drawable/favorite_checkbox"
+        android:stateListAnimator="@null"
+        android:textOff=""
+        android:textOn=""
+        app:layout_constraintBottom_toBottomOf="@+id/poster_detail_view"
+        app:layout_constraintLeft_toRightOf="@+id/poster_detail_view"
+        app:layout_constraintRight_toRightOf="parent" />
+
 
 </android.support.constraint.ConstraintLayout>

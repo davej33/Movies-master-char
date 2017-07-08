@@ -11,6 +11,7 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 
 import com.example.android.movieapp2.data.MovieContract;
+import com.example.android.movieapp2.utils.FavoriteUtils;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
 
@@ -21,7 +22,7 @@ import com.squareup.picasso.Picasso;
 public final class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHolder> {
 
     private static final String LOG_TAG = MovieAdapter.class.getSimpleName();
-    private static Cursor sCursor;
+    private Cursor mCursor;
     private Context mContext;
     private static int mImageWidth;
     private static int mImageHeight;
@@ -64,71 +65,14 @@ public final class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieV
     public static int getmImageHeight(){
         return mImageHeight;
     }
+
     @Override
     public void onBindViewHolder(final MovieViewHolder holder, int position) {
-        sCursor.moveToPosition(position);
+        mCursor.moveToPosition(position);
 
-        // get poster image url
-        int posterColId = sCursor.getColumnIndex(MovieContract.MovieEntry.MOVIE_POSTER);
-        String posterUrl = sCursor.getString(posterColId);
-
-        // get title
-        int titleColId = sCursor.getColumnIndex(MovieContract.MovieEntry.MOVIE_TITLE);
-        final String title = sCursor.getString(titleColId);
-        Log.i(LOG_TAG, "Title: " + title);
-
-        int tmdbIdCol = sCursor.getColumnIndex(MovieContract.MovieEntry.MOVIE_TMDB_ID);
-        int tmdbId = sCursor.getInt(tmdbIdCol);
-
-
-        int idCol = sCursor.getColumnIndex(MovieContract.MovieEntry.MOVIE_ID);
-        final int id = sCursor.getInt(idCol);
-        final String[] idArg = {String.valueOf(id)};
-
-
-
-        // update DB with state of favorite
-//        holder.favoriteCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-//            @Override
-//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-//                ContentValues cv = new ContentValues();
-//                Uri itemUri = ContentUris.withAppendedId(MovieContract.MovieEntry.MOVIE_TABLE_URI, id);
-//                int check = 0;
-//                if (isChecked) {
-//                        cv.put(MovieContract.MovieEntry.MOVIE_FAVORITE, 1);
-//                        check = mContext.getContentResolver().update(itemUri,
-//                                cv, null, null);
-//                    if (check == 1) {
-//                        Toast.makeText(mContext, "\"" + title + "\"" + " added to Favorites", Toast.LENGTH_SHORT).show();
-//                    } else {
-//                        Toast.makeText(mContext, "Failed to add " + "\"" + title + "\"" + " to Favorites", Toast.LENGTH_SHORT).show();
-//                    }
-//
-//                } else {
-//                    cv.put(MovieContract.MovieEntry.MOVIE_FAVORITE, 0);
-//                    check = mContext.getContentResolver().update(itemUri,
-//                            cv, MovieContract.MovieEntry.MOVIE_TMDB_ID, idArg);
-//                    if (check == 1) {
-//                        Toast.makeText(mContext, "\"" + title + "\"" + " removed from Favorites", Toast.LENGTH_SHORT).show();
-//                    } else {
-//                        Toast.makeText(mContext, "Failed to remove " + "\"" + title + "\"" + " from Favorites", Toast.LENGTH_SHORT).show();
-//                    }
-//
-//                }
-//            }
-//        });
-
-        // get favorite state and set display
-        int favoriteCol = sCursor.getColumnIndex(MovieContract.MovieEntry.MOVIE_FAVORITE);
-        Integer isFavorite = sCursor.getInt(favoriteCol);
-        if (isFavorite == 1) {
-            holder.favoriteCheckBox.setChecked(true);
-        } else {
-            holder.favoriteCheckBox.setChecked(false);
-        }
-
-
-        // picasso library to fetch and display images
+        // poster
+        int posterColId = mCursor.getColumnIndex(MovieContract.MovieEntry.MOVIE_POSTER);
+        String posterUrl = mCursor.getString(posterColId);
         Picasso.with(mContext)
                 .load(posterUrl)
                 .error(R.drawable.error)
@@ -137,30 +81,47 @@ public final class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieV
                 .placeholder(R.drawable.placeholder)
                 .centerCrop()
                 .into(holder.poster);
+
+        int titleColId = mCursor.getColumnIndex(MovieContract.MovieEntry.MOVIE_TITLE);
+        String title = mCursor.getString(titleColId);
+
+        // get favorite state and set display
+        if (FavoriteUtils.checkFavorite(mContext, title)) {
+            holder.favoriteCheckBox.setChecked(true);
+        } else {
+            holder.favoriteCheckBox.setChecked(false);
+        }
+
+
+
     }
 
 
     @Override
     public int getItemCount() {
-        if (sCursor == null) {
+        if (mCursor == null) {
 //            Log.w(LOG_TAG, "Count = " + 0);
             return 0;
         }
 //        Log.w(LOG_TAG, "Count = " + sCursor.getCount());
-        return sCursor.getCount();
+        return mCursor.getCount();
     }
 
     public void swapCursor(Cursor cursor) {
         Log.w(LOG_TAG, "Swap Cursor run");
-        sCursor = cursor;
+        mCursor = cursor;
         notifyDataSetChanged();
     }
 
-    public String getSelectedMovieDbID(int cursorIndexNum){
-        sCursor.moveToPosition(cursorIndexNum);
-
-        int idCol = sCursor.getColumnIndex(MovieContract.MovieEntry._ID);
-        return sCursor.getString(idCol);
+    public String getSelectedMovieLocalID(int cursorIndexNum){
+        mCursor.moveToPosition(cursorIndexNum);
+        int idCol = mCursor.getColumnIndex(MovieContract.MovieEntry._ID);
+        return mCursor.getString(idCol);
+    }
+    public String getSelectedMovieTitle(int cursorIndexNum){
+        mCursor.moveToPosition(cursorIndexNum);
+        int titleCol = mCursor.getColumnIndex(MovieContract.MovieEntry.MOVIE_TITLE);
+        return mCursor.getString(titleCol);
     }
 
     public class MovieViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{

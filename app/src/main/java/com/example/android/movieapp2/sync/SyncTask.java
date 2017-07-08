@@ -17,12 +17,16 @@ import org.json.JSONException;
 
 public final class SyncTask {
 
+    static int test;
+
     static void syncData(Context context) {
 
         // get network data
         ContentValues[] cv = null;
         try {
             cv = NetworkUtils.fetchData(context);
+            test++;
+            Log.i("SyncTask","Network Utils Run Count: " + String.valueOf(test));
         } catch (JSONException e) {
             e.printStackTrace();
         }

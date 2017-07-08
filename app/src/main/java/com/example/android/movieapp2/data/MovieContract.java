@@ -23,7 +23,7 @@ public final class MovieContract {
 
         // table columns
         public static final String MOVIE_TABLE = "movie";
-        public static final String MOVIE_ID = BaseColumns._ID;
+        public static final String _ID = BaseColumns._ID;
         public static final String MOVIE_TMDB_ID = "tmdbid";
         public static final String MOVIE_TITLE = "title";
         public static final String MOVIE_RELEASE_DATE = "date";

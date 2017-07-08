@@ -14,10 +14,10 @@ public class DetailsActivity extends AppCompatActivity implements MovieDetailFra
         setContentView(R.layout.activity_details);
 
         Intent intent = getIntent();
-        String id = intent.getStringExtra("movieId");
-        Log.i("DetailsActivity", "MovieID from Intent: " + id);
+        String localID = intent.getStringExtra(getString(R.string.local_id_key));
+        String title = intent.getStringExtra(getString(R.string.movie_title_key));
         getSupportFragmentManager().beginTransaction()
-                .add(R.id.detail_container, new MovieDetailFragment().newInstance(id)).commit();
+                .add(R.id.detail_container, new MovieDetailFragment().newInstance(localID, title)).commit();
     }
 
     @Override

@@ -26,11 +26,10 @@ public final class SyncUtils {
         Thread providerCheck = new Thread(new Runnable() {
             @Override
             public void run() {
-                String[] projection = {MovieContract.MovieEntry.MOVIE_ID};
+                String[] projection = {MovieContract.MovieEntry._ID};
                 Cursor cursor = context.getContentResolver().query(MovieContract.MovieEntry.MOVIE_TABLE_URI,
                         projection,null,null,null);
                 if(cursor == null || cursor.getCount() == 0){
-                    Log.w("SyncUtils", "ProviderCheck = null. sIsInit = " + sIsInitialed);
                     syncImmediately(context);
                 }
                 if(cursor != null ) cursor.close();
