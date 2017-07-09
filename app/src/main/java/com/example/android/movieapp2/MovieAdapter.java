@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 
 import com.example.android.movieapp2.data.MovieContract;
@@ -54,9 +55,7 @@ public final class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieV
         view.getLayoutParams().width = mImageWidth;
 
         // create holder using view
-        MovieViewHolder holder = new MovieViewHolder(view);
-
-        return holder;
+        return new MovieViewHolder(view);
     }
 
     public static int getmImageWidth(){
@@ -67,7 +66,7 @@ public final class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieV
     }
 
     @Override
-    public void onBindViewHolder(final MovieViewHolder holder, int position) {
+    public void onBindViewHolder(final MovieViewHolder holder, final int position) {
         mCursor.moveToPosition(position);
 
         // poster
@@ -83,17 +82,48 @@ public final class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieV
                 .into(holder.poster);
 
         int titleColId = mCursor.getColumnIndex(MovieContract.MovieEntry.MOVIE_TITLE);
-        String title = mCursor.getString(titleColId);
+        final String title = mCursor.getString(titleColId);
 
         // get favorite state and set display
         if (FavoriteUtils.checkFavorite(mContext, title)) {
             holder.favoriteCheckBox.setChecked(true);
+            Log.i(LOG_TAG, "Holder Pos / state" + position + " / true");
         } else {
             holder.favoriteCheckBox.setChecked(false);
+            Log.i(LOG_TAG, "Holder Pos / state" + position + " / false");
         }
 
 
-
+        holder.favoriteCheckBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(holder.favoriteCheckBox.isChecked()){
+                    FavoriteUtils.addFavorite(mContext, title);
+                    Log.e(LOG_TAG, "int Position: " + position);
+                }else {
+                    try {
+                        FavoriteUtils.removeFavorite(mContext, title);
+                    } catch (Exception e){
+                        Log.e(LOG_TAG, "Movie not in Favorites");
+                    }
+                }
+            }
+        });
+//        holder.favoriteCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//            @Override
+//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//                if(isChecked){
+//                    FavoriteUtils.addFavorite(mContext, title);
+//                    Log.e(LOG_TAG, "int Position: " + position);
+//                } else {
+//                    try {
+//                        FavoriteUtils.removeFavorite(mContext, title);
+//                    } catch (Exception e){
+//                        Log.e(LOG_TAG, "Movie not in Favorites");
+//                    }
+//                }
+//            }
+//        });
     }
 
 
