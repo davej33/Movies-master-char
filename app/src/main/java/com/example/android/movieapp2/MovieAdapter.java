@@ -66,7 +66,7 @@ public final class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieV
     }
 
     @Override
-    public void onBindViewHolder(final MovieViewHolder holder, final int position) {
+    public void onBindViewHolder(final MovieViewHolder holder, int position) {
         mCursor.moveToPosition(position);
 
         // poster
@@ -99,7 +99,7 @@ public final class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieV
             public void onClick(View v) {
                 if(holder.favoriteCheckBox.isChecked()){
                     FavoriteUtils.addFavorite(mContext, title);
-                    Log.e(LOG_TAG, "int Position: " + position);
+                    Log.e(LOG_TAG, "int Position: " + holder.getAdapterPosition());
                 }else {
                     try {
                         FavoriteUtils.removeFavorite(mContext, title);
@@ -109,31 +109,14 @@ public final class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieV
                 }
             }
         });
-//        holder.favoriteCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-//            @Override
-//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-//                if(isChecked){
-//                    FavoriteUtils.addFavorite(mContext, title);
-//                    Log.e(LOG_TAG, "int Position: " + position);
-//                } else {
-//                    try {
-//                        FavoriteUtils.removeFavorite(mContext, title);
-//                    } catch (Exception e){
-//                        Log.e(LOG_TAG, "Movie not in Favorites");
-//                    }
-//                }
-//            }
-//        });
     }
 
 
     @Override
     public int getItemCount() {
         if (mCursor == null) {
-//            Log.w(LOG_TAG, "Count = " + 0);
             return 0;
         }
-//        Log.w(LOG_TAG, "Count = " + sCursor.getCount());
         return mCursor.getCount();
     }
 

@@ -28,14 +28,19 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         MovieAdapter.ListItemClickListener {
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
+    private static final String POPULAR_VALUE = "popular.desc";
+    private static final String RATING_VALUE = "vote_average.desc";
+    private static final String FAVORITES_VALUE = "favorites";
     private MovieAdapter mAdapter;
     private static final int LANDSCAPE_COLUMNS = 3;
     private static final int PORTRAIT_COLUMNS = 2;
-    private static final int LOADER_ID = 300;
+    private static final int POP_RATE_LOADER_ID = 100;
+    private static final int FAVORITES_LOADER_ID = 200;
     private boolean mSortPrefChanged = false;
     private static boolean mFavoriteChanged = false;
     private String mSortValue;
     private SharedPreferences.OnSharedPreferenceChangeListener mListener;
+    private SharedPreferences mPref;
     // TODO: fetch more results when scrolled to end
 
     @Override
@@ -81,43 +86,88 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     private void setupSharedPreferences() {
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-        mListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+        mPref = PreferenceManager.getDefaultSharedPreferences(this);
+        mListener = new SharedPreferences.OnSharedPreferenceChangeListener() { // instantiated listener to try to prevent garbage collection
+            // because listener not being triggered after first change of preference. Still doesn't, so added mSortPrefChanged and mFavoriteChanged
+            // to provide listening function.
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-                Log.i(LOG_TAG,"MA-SP run");
-                // attempt to compare default value to current value to determine if SP actually changed.
+                Log.i(LOG_TAG, "MA-SP run");
+                // compare default value to current value to determine if SP actually changed. This is to prevent
+                // the syncImmediately method from running again when calling Settings for first time
                 if (key.equals(getString(R.string.pref_sort_key))) {
                     String prefValue = sharedPreferences.getString(key, null); // get value of changed SP
-                    Log.i(LOG_TAG, "MA-SP value: " + prefValue);
-                    if (prefValue.equals(mSortValue)) {
-                        Log.w(LOG_TAG, "Listener run. SP-Unchanged");
-                    } else {
-                        Log.i(LOG_TAG, "MA-SP sort changed: " + prefValue);
+                    if (prefValue != null && !prefValue.equals(mSortValue)) {
                         mSortValue = prefValue;
                         mSortPrefChanged = true; // set test variable to true so activity will sync onStart()
                     }
                 } else {
-                    Log.i(LOG_TAG, "MA-SP key changed %%%%%%%%%%%%: " + key);
                     mFavoriteChanged = true;
                 }
             }
         };
-        pref.registerOnSharedPreferenceChangeListener(mListener);
-        if(SharedPreferences.OnSharedPreferenceChangeListener.class.getSimpleName() == null) {
+        mPref.registerOnSharedPreferenceChangeListener(mListener);
+        if (SharedPreferences.OnSharedPreferenceChangeListener.class.getSimpleName() == null) {
             Log.i(LOG_TAG, "Listener null");
         } else {
             Log.i(LOG_TAG, "Listener not null" + SharedPreferences.OnSharedPreferenceChangeListener.class.getSimpleName());
         }
-        mSortValue = pref.getString(getString(R.string.pref_sort_key), getString(R.string.pref_sort_default)); // set current value of sort pref
+        mSortValue = mPref.getString(getString(R.string.pref_sort_key), getString(R.string.pref_sort_default)); // set current value of sort pref
         Log.i(LOG_TAG, "setupSP() mSortValue = " + mSortValue);
     }
 
+    @Override
+    protected void onStart() {
+
+        // check if SP-ChangeListener is null
+        if (SharedPreferences.OnSharedPreferenceChangeListener.class.getSimpleName() == null)
+            Log.i(LOG_TAG, "Listener null");
+
+
+        if (mSortPrefChanged) {
+
+            switch (mPref.getString(getString(R.string.pref_sort_key), null)) {
+                case POPULAR_VALUE:
+                    SyncUtils.syncImmediately(this);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            displayData();
+                        }
+                    }, 1000);
+                    mSortPrefChanged = false;
+                    break;
+                case RATING_VALUE:
+                    SyncUtils.syncImmediately(this);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            displayData();
+                        }
+                    }, 1000);
+                    mSortPrefChanged = false;
+                    break;
+                case FAVORITES_VALUE:
+                    if (getSupportLoaderManager().getLoader(POP_RATE_LOADER_ID) != null) {
+                        getSupportLoaderManager().destroyLoader(POP_RATE_LOADER_ID);
+                        getSupportLoaderManager().initLoader(FAVORITES_LOADER_ID, null, this);
+                    } else {
+                        getSupportLoaderManager().restartLoader(FAVORITES_LOADER_ID, null, this);
+                    }
+            }
+        }
+//        if (mFavoriteChanged) {
+//            displayData();
+//            mFavoriteChanged = false;
+//        }
+        super.onStart();
+    }
+
     private void displayData() {
-        if (getSupportLoaderManager().getLoader(LOADER_ID) != null) {
-            getSupportLoaderManager().restartLoader(LOADER_ID, null, this);
+        if (getSupportLoaderManager().getLoader(POP_RATE_LOADER_ID) != null) {
+            getSupportLoaderManager().restartLoader(POP_RATE_LOADER_ID, null, this);
         } else {
-            getSupportLoaderManager().initLoader(LOADER_ID, null, this);
+            getSupportLoaderManager().initLoader(POP_RATE_LOADER_ID, null, this);
         }
     }
 
@@ -141,15 +191,21 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new CursorLoader(this,
-                MovieContract.MovieEntry.MOVIE_TABLE_URI, null, null, null, null);
+        switch (id) {
+            case POP_RATE_LOADER_ID:
+                return new CursorLoader(this,
+                        MovieContract.MovieEntry.MOVIE_TABLE_URI, null, null, null, null);
+            case FAVORITES_LOADER_ID:
+                return new CursorLoader(this, MovieContract.MovieFavorites.FAVORITE_TABLE_URI, null, null, null, null);
+            default:
+                return null;
+        }
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         data.moveToFirst();
         mAdapter.swapCursor(data);
-
     }
 
     @Override
@@ -180,7 +236,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     protected void onPause() {
         super.onPause();
-        Log.i(LOG_TAG,"onPause run");
+        Log.i(LOG_TAG, "onPause run");
     }
 
     public static void setmFavoriteChanged(boolean b) {
@@ -198,26 +254,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 //
 //    }
 
-    @Override
-    protected void onStart() {
-        if(SharedPreferences.OnSharedPreferenceChangeListener.class.getSimpleName() == null) Log.i(LOG_TAG, "Listener null");
-        if (mSortPrefChanged) {
-            SyncUtils.syncImmediately(this);
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    displayData();
-                }
-            }, 1000);
-
-            mSortPrefChanged = false;
-        }
-        if (mFavoriteChanged) {
-            displayData();
-            mFavoriteChanged = false;
-        }
-        super.onStart();
-    }
 
 //    @Override
 //    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {

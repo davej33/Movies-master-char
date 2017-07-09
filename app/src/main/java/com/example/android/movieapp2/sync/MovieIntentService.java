@@ -19,7 +19,6 @@ public final class MovieIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
-
         SyncTask.syncData(getApplicationContext());
     }
 }

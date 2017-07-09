@@ -12,6 +12,7 @@ public final class MovieContract {
     // set content authority, path, base uri
     public static final String CONTENT_AUTHORITY = "com.example.android.movieapp2";
     public static final String MOVIE_PATH = "movie";
+    public static final String FAVORITES_PATH = "favorites";
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
 
     public static final class MovieEntry implements BaseColumns{
@@ -32,5 +33,22 @@ public final class MovieContract {
         public static final String MOVIE_RATING = "rating";
         public static final String MOVIE_FAVORITE = "favorite";
         public static final String MOVIE_POPULARITY = "popularity";
+    }
+
+    public static final class MovieFavorites implements BaseColumns{
+
+        // favorite table uri
+        public static final Uri FAVORITE_TABLE_URI = BASE_CONTENT_URI.buildUpon()
+                .appendPath(FAVORITES_PATH)
+                .build();
+
+        // table columns
+        public static final String FAVORITES_TABLE = "favorites";
+        public static final String FAVORITES_ID = BaseColumns._ID;
+        public static final String FAVORITES_TMDB_ID = "tmdbid";
+        public static final String FAVORITES_TITLE = "title";
+        public static final String FAVORITES_RELEASE_DATE = "date";
+        public static final String FAVORITES_PLOT = "plot";
+        public static final String FAVORITES_POSTER = "poster";
     }
 }

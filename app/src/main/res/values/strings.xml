@@ -24,6 +24,9 @@
     <string name="pref_sort_rating_label">Highest Rating</string>
     <string name="pref_sort_rating_value">vote_average.desc</string>
 
+    <string name="pref_sort_fav_label">Favorites</string>
+    <string name="pref_sort_fav_value">favorites</string>
+
     <!-- Favorites Preference -->
     <string name="pref_fav_label">Favorites</string>
     <string name="pref_fav_key">favorites</string>

@@ -23,7 +23,7 @@ public final class MovieDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        final String CREATE_DB = "CREATE TABLE " + MovieEntry.MOVIE_TABLE + " (" +
+        final String CREATE_MOVIE_TABLE = "CREATE TABLE " + MovieEntry.MOVIE_TABLE + " (" +
                 MovieEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 MovieEntry.MOVIE_TMDB_ID + " INTEGER UNIQUE NOT NULL, " +
                 MovieEntry.MOVIE_TITLE + " TEXT NOT NULL, " +
@@ -34,13 +34,22 @@ public final class MovieDbHelper extends SQLiteOpenHelper {
                 MovieEntry.MOVIE_FAVORITE + " INTEGER DEFAULT 0, " +
                 MovieEntry.MOVIE_POSTER + " BLOB);";
 
-        db.execSQL(CREATE_DB);
+        final String CREATE_FAVORITE_TABLE = "CREATE TABLE " + MovieContract.MovieFavorites.FAVORITES_TABLE + " (" +
+                MovieContract.MovieFavorites.FAVORITES_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                MovieContract.MovieFavorites.FAVORITES_TMDB_ID+ " INTEGER UNIQUE NOT NULL, " +
+                MovieContract.MovieFavorites.FAVORITES_TITLE + " TEXT NOT NULL, " +
+                MovieContract.MovieFavorites.FAVORITES_RELEASE_DATE + " TEXT NOT NULL, " +
+                MovieContract.MovieFavorites.FAVORITES_PLOT + " TEXT NOT NULL, " +
+                MovieContract.MovieFavorites.FAVORITES_POSTER + " BLOB);";
+
+        db.execSQL(CREATE_MOVIE_TABLE);
+        db.execSQL(CREATE_FAVORITE_TABLE);
 
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + MovieEntry.MOVIE_TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + MovieEntry.MOVIE_TABLE + ", " + MovieContract.MovieFavorites.FAVORITES_TABLE);
         onCreate(db);
     }
 }

@@ -26,13 +26,13 @@ public final class SyncTask {
         try {
             cv = NetworkUtils.fetchData(context);
             test++;
-            Log.i("SyncTask","Network Utils Run Count: " + String.valueOf(test));
+            Log.i("SyncTask","Network Utils Run Count: " + test);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-//        Log.i("SyncTask", "cv size " + cv.length );
+        Log.i("SyncTask", "cv size " + cv.length );
         try {
-            if (cv != null && cv.length > 0) {
+            if (cv.length > 0) {
                 int rowsDeleted = context.getContentResolver().delete(MovieContract.MovieEntry.MOVIE_TABLE_URI, null, null);
                 int rowsInserted = context.getContentResolver().bulkInsert(MovieContract.MovieEntry.MOVIE_TABLE_URI, cv);
                 Log.i("SyncTask", "deleted/inserted: " + rowsDeleted + "/" + rowsInserted);
@@ -41,21 +41,24 @@ public final class SyncTask {
             Log.i("SyncTask", "SQL error: " + e );
         }
 
-        try {
-            Cursor cursor = context.getContentResolver().query(MovieContract.MovieEntry.MOVIE_TABLE_URI,
-                    null, null, null, null);
-            cursor.moveToFirst();
-            int col = cursor.getColumnIndex(MovieContract.MovieEntry.MOVIE_TITLE);
-            String s = cursor.getString(col);
-
-            int colID = cursor.getColumnIndex(MovieContract.MovieEntry._ID);
-            String sId = cursor.getString(colID);
-
-            cursor.close();
-            Log.w("SyncTask", "DB movie #1 = " + s + " id: " + sId);
-        }catch(SQLException e){
-            Log.i("SyncTask", "SQL error 2: " + e);
-        }
+//        try {
+//            Cursor cursor = context.getContentResolver().query(MovieContract.MovieEntry.MOVIE_TABLE_URI,
+//                    null, null, null, null);
+//            cursor.moveToFirst();
+//            Log.w("SyncTask", "Cursor count: " + cursor.getCount());
+//            int col = cursor.getColumnIndex(MovieContract.MovieEntry.MOVIE_TITLE);
+//            String s;
+//            try{
+//            s = cursor.getString(col);
+//                Log.w("SyncTask", "DB movie #1 = " + s);}
+//            catch (Exception e){
+//                Log.e("SyncTask", "Error: " + e);
+//            }
+//
+//            cursor.close();
+//        }catch(SQLException e){
+//            Log.i("SyncTask", "SQL error 2: " + e);
+//        }
 
     }
 }
