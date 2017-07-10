@@ -110,30 +110,30 @@ public final class MovieContentProvider extends ContentProvider {
     @Nullable
     @Override
     public Uri insert(@NonNull Uri uri, @Nullable ContentValues values) {
-//        SQLiteDatabase db = mDbHelper.getWritableDatabase();
-//        long check;
-//
-//        switch (sUriMatcher.match(uri)) {
-//            case FAV_ITEM_CODE:
-//                check = db.insert(MovieContract.MovieFavorites.FAVORITES_TABLE, null, values);
-//                break;
-//            case MOVIE_ITEM_CODE:
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        long check;
+
+        switch (sUriMatcher.match(uri)) {
+            case FAV_ITEM_CODE:
+                check = db.insert(MovieContract.MovieFavorites.FAVORITES_TABLE, null, values);
+                break;
+            case MOVIE_ITEM_CODE:
+                check = db.insert(MovieContract.MovieEntry.MOVIE_TABLE, null, values);
+                break;
+//            case MOVIE_TABLE_CODE:
 //                check = db.insert(MovieContract.MovieEntry.MOVIE_TABLE, null, values);
 //                break;
-////            case MOVIE_TABLE_CODE:
-////                check = db.insert(MovieContract.MovieEntry.MOVIE_TABLE, null, values);
-////                break;
-//            default:
-//                throw new IllegalArgumentException("Insert not supported: " + uri);
-//        }
-//        if (check == 1) {
-//            Log.i(LOG_TAG, "Favorite Insert success!");
-//            return uri;
-//        } else {
-//            Log.i(LOG_TAG, "Favorite Insert failed");
-//            return null;
-//        }
-        return null;
+            default:
+                throw new IllegalArgumentException("Insert not supported: " + uri);
+        }
+        if (check == 1) {
+            Log.i(LOG_TAG, "Favorite Insert success!");
+            return uri;
+        } else {
+            Log.i(LOG_TAG, "Favorite Insert failed");
+            return null;
+        }
+//        return null;
     }
 
     @Override

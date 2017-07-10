@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         MovieAdapter.ListItemClickListener {
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
-    private static final String POPULAR_VALUE = "popular.desc";
+    private static final String POPULAR_VALUE = "popularity.desc";
     private static final String RATING_VALUE = "vote_average.desc";
     private static final String FAVORITES_VALUE = "favorites";
     private MovieAdapter mAdapter;
@@ -38,9 +38,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private static final int FAVORITES_LOADER_ID = 200;
     private boolean mSortPrefChanged = false;
     private static boolean mFavoriteChanged = false;
-    private String mSortValue;
     private SharedPreferences.OnSharedPreferenceChangeListener mListener;
     private SharedPreferences mPref;
+    private String mSortValue = "popularity.desc";
     // TODO: fetch more results when scrolled to end
 
     @Override
@@ -107,26 +107,27 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             }
         };
         mPref.registerOnSharedPreferenceChangeListener(mListener);
-        if (SharedPreferences.OnSharedPreferenceChangeListener.class.getSimpleName() == null) {
-            Log.i(LOG_TAG, "Listener null");
-        } else {
-            Log.i(LOG_TAG, "Listener not null" + SharedPreferences.OnSharedPreferenceChangeListener.class.getSimpleName());
-        }
-        mSortValue = mPref.getString(getString(R.string.pref_sort_key), getString(R.string.pref_sort_default)); // set current value of sort pref
-        Log.i(LOG_TAG, "setupSP() mSortValue = " + mSortValue);
+//        if (SharedPreferences.OnSharedPreferenceChangeListener.class.getSimpleName() == null) {
+//            Log.i(LOG_TAG, "Listener null");
+//        } else {
+//            Log.i(LOG_TAG, "Listener not null" + SharedPreferences.OnSharedPreferenceChangeListener.class.getSimpleName());
+//        }
+//        mSortValue = mPref.getString(getString(R.string.pref_sort_key), getString(R.string.pref_sort_default)); // set current value of sort pref
+
     }
 
     @Override
     protected void onStart() {
 
         // check if SP-ChangeListener is null
-        if (SharedPreferences.OnSharedPreferenceChangeListener.class.getSimpleName() == null)
+        if (SharedPreferences.OnSharedPreferenceChangeListener.class.getSimpleName() == null) {
             Log.i(LOG_TAG, "Listener null");
-
+        } else {
+            Log.i(LOG_TAG, "Listener NOT null");
+        }
 
         if (mSortPrefChanged) {
-
-            switch (mPref.getString(getString(R.string.pref_sort_key), null)) {
+            switch (mSortValue) {
                 case POPULAR_VALUE:
                     SyncUtils.syncImmediately(this);
                     new Handler().postDelayed(new Runnable() {
@@ -146,6 +147,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                         }
                     }, 1000);
                     mSortPrefChanged = false;
+                    mSortValue = getString(R.string.pref_sort_rating_value); // TODO: better manage SP change, fix listener.
                     break;
                 case FAVORITES_VALUE:
                     if (getSupportLoaderManager().getLoader(POP_RATE_LOADER_ID) != null) {
@@ -154,12 +156,15 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                     } else {
                         getSupportLoaderManager().restartLoader(FAVORITES_LOADER_ID, null, this);
                     }
+                    mSortValue = getString(R.string.pref_sort_fav_value);
             }
         }
-//        if (mFavoriteChanged) {
-//            displayData();
-//            mFavoriteChanged = false;
-//        }
+
+        // refresh display data if SP-Favorites changed
+        if (mFavoriteChanged) {
+            displayData();
+            mFavoriteChanged = false;
+        }
         super.onStart();
     }
 

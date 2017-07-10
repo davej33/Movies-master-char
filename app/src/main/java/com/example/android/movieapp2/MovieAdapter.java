@@ -87,10 +87,8 @@ public final class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieV
         // get favorite state and set display
         if (FavoriteUtils.checkFavorite(mContext, title)) {
             holder.favoriteCheckBox.setChecked(true);
-            Log.i(LOG_TAG, "Holder Pos / state" + position + " / true");
         } else {
             holder.favoriteCheckBox.setChecked(false);
-            Log.i(LOG_TAG, "Holder Pos / state" + position + " / false");
         }
 
 
@@ -99,7 +97,6 @@ public final class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieV
             public void onClick(View v) {
                 if(holder.favoriteCheckBox.isChecked()){
                     FavoriteUtils.addFavorite(mContext, title);
-                    Log.e(LOG_TAG, "int Position: " + holder.getAdapterPosition());
                 }else {
                     try {
                         FavoriteUtils.removeFavorite(mContext, title);
