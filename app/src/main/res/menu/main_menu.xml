@@ -7,4 +7,9 @@
         android:id="@+id/action_settings"
         app:showAsAction="never"
         />
+    <item
+        android:title="Chec Fav DB"
+        android:id="@+id/check_fav_db"
+        app:showAsAction="never"
+        />
 </menu>

@@ -20,47 +20,44 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.example.android.movieapp2.data.MovieContract;
 import com.example.android.movieapp2.utils.FavoriteUtils;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
-
-import org.w3c.dom.Text;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.ListIterator;
+import com.example.android.movieapp2.data.MovieContract.MovieFavorites;
 import java.util.Set;
-
-import butterknife.BindView;
 
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link MovieDetailFragment.OnFragmentInteractionListener} interface
+ * {@link DetailFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link MovieDetailFragment#newInstance} factory method to
+ * Use the {@link DetailFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MovieDetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class DetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    private static final String LOG_TAG = MovieDetailFragment.class.getSimpleName();
+    // Log tag
+    private static final String LOG_TAG = DetailFragment.class.getSimpleName();
+
     // the fragment initialization parameters
     private final String ARG_LOCAL_ID = "localID";
     private final String ARG_MOVIE_TITLE = "title";
-    private static final int DETAIL_LOADER_ID = 111;
     private String mLocalID;
-    private String mTitle;
-    private Uri mSingleMovieUri;
-    private static SharedPreferences mPref;
-    private SharedPreferences.OnSharedPreferenceChangeListener mPreferenceListener;
-    private int mInitFavCount;
-    private static Set<String> mSetList;
+    private String mTitle; // also used to create ContentValue
+
+    // loader ID
+    private static final int DETAIL_LOADER_ID = 111;
+
+    // cursor and contentValue vars
+//    private Cursor mCursor;
+    private String mReleaseDate;
+    private String mPlot;
+    private String mPoster;
+    private float mRating;
 
     // views
     private TextView mTitleV;
@@ -73,7 +70,7 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
 
     private OnFragmentInteractionListener mListener;
 
-    public MovieDetailFragment() {
+    public DetailFragment() {
         // Required empty public constructor
     }
 
@@ -81,11 +78,11 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @return A new instance of fragment MovieDetailFragment.
+     * @return A new instance of fragment DetailFragment.
      */
 
-    public MovieDetailFragment newInstance(String localDbID, String title) {
-        MovieDetailFragment fragment = new MovieDetailFragment();
+    public DetailFragment newInstance(String localDbID, String title) {
+        DetailFragment fragment = new DetailFragment();
         Bundle args = new Bundle();
         args.putString(ARG_LOCAL_ID, localDbID);
         args.putString(ARG_MOVIE_TITLE, title);
@@ -102,14 +99,14 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
         }
 
         // SharedPreferences and Listener
-        mPref = PreferenceManager.getDefaultSharedPreferences(getContext()); // instantiate SharedPreferences
-        mPreferenceListener = new SharedPreferences.OnSharedPreferenceChangeListener() { // instantiate SharePrefListener
-            @Override
-            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
-                Log.i(LOG_TAG, "DetFrag SP Changed %%%%%%%%%%%%%%%%: ");
-            }
-        };
-        mPref.registerOnSharedPreferenceChangeListener(mPreferenceListener); // set Listener on SharedPref
+//        mPref = PreferenceManager.getDefaultSharedPreferences(getContext()); // instantiate SharedPreferences
+//        mPreferenceListener = new SharedPreferences.OnSharedPreferenceChangeListener() { // instantiate SharePrefListener
+//            @Override
+//            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
+//                Log.i(LOG_TAG, "DetFrag SP Changed %%%%%%%%%%%%%%%%: ");
+//            }
+//        };
+//        mPref.registerOnSharedPreferenceChangeListener(mPreferenceListener); // set Listener on SharedPref
     }
 
     @Override
@@ -138,7 +135,9 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, final boolean b) {
                 if(b){
-                    FavoriteUtils.addFavorite(getContext(), mTitle);
+                    ContentValues cv = getContentValues();
+                    FavoriteUtils.addFavorite(getContext(), mTitle, cv);
+
                 } else {
                     try {
                         FavoriteUtils.removeFavorite(getContext(), mTitle);
@@ -146,8 +145,6 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
                         Log.e(LOG_TAG,"error removing favorite: " + mTitle);
                     }
                 }
-
-
             }
         });
         // Inflate the layout for this fragment
@@ -193,38 +190,38 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         String[] selArgs = {mLocalID};
-        mSingleMovieUri = Uri.parse(MovieContract.MovieEntry.MOVIE_TABLE_URI.toString() + "/" + mLocalID);
-        return new CursorLoader(getContext(), mSingleMovieUri, null, MovieContract.MovieEntry._ID + "=?",
+        Uri singleMovieUri = Uri.parse(MovieContract.MovieEntry.MOVIE_TABLE_URI.toString() + "/" + mLocalID);
+        // TODO: how to seach for
+        return new CursorLoader(getContext(), singleMovieUri, null, MovieContract.MovieEntry._ID + "=?",
                 selArgs, null);
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         data.moveToFirst();
+//        mCursor = data;
 
         // title
-        int titleColId = data.getColumnIndex(MovieContract.MovieEntry.MOVIE_TITLE);
-        String title = data.getString(titleColId);
-        mTitleV.setText(title);
+        mTitleV.setText(mTitle);
 
         // release date
         int releaseDateCol = data.getColumnIndex(MovieContract.MovieEntry.MOVIE_RELEASE_DATE);
         int releaseDate = data.getInt(releaseDateCol);
-        String relDateString = "(" + String.valueOf(releaseDate) + ")";
-        mReleaseV.setText(relDateString);
+        mReleaseDate = "(" + String.valueOf(releaseDate) + ")";
+        mReleaseV.setText(mReleaseDate);
 
         // plot
         int plotCol = data.getColumnIndex(MovieContract.MovieEntry.MOVIE_PLOT);
-        String plot = data.getString(plotCol);
-        mPlotV.setText(plot);
+        mPlot = data.getString(plotCol);
+        mPlotV.setText(mPlot);
 
         // rating bar
         int rateCol = data.getColumnIndex(MovieContract.MovieEntry.MOVIE_RATING);
-        float rating = (float) (data.getDouble(rateCol) / 2);
-        mRatingBar.setRating(rating);
+        mRating = (float) (data.getDouble(rateCol) / 2);
+        mRatingBar.setRating(mRating);
 
         // favorite state
-        if (FavoriteUtils.checkFavorite(getContext(), title)) {
+        if (FavoriteUtils.checkFavorite(getContext(), mTitle)) {
             mFavorite_button.setChecked(true);
         } else {
             mFavorite_button.setChecked(false);
@@ -232,9 +229,9 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
 
         // poster
         int posterColId = data.getColumnIndex(MovieContract.MovieEntry.MOVIE_POSTER);
-        String posterUrl = data.getString(posterColId);
+        mPoster = data.getString(posterColId);
         Picasso.with(getContext())
-                .load(posterUrl)
+                .load(mPoster)
                 .error(R.drawable.error)
                 .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
                 .resize(MovieAdapter.getmImageWidth(), MovieAdapter.getmImageHeight())
@@ -250,8 +247,7 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
 
     @Override
     public void onDestroy() {
-        PreferenceManager.getDefaultSharedPreferences(getContext())
-                .unregisterOnSharedPreferenceChangeListener(mPreferenceListener);
+
         super.onDestroy();
     }
 
@@ -259,6 +255,18 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+    }
+
+    private ContentValues getContentValues() {
+
+        ContentValues cv = new ContentValues();
+        cv.put(MovieFavorites.FAVORITES_TITLE, mTitle);
+        cv.put(MovieFavorites.FAVORITES_PLOT, mPlot);
+        cv.put(MovieFavorites.FAVORITES_RELEASE_DATE, mReleaseDate);
+        cv.put(MovieFavorites.FAVORITES_POSTER, mPoster);
+        cv.put(MovieFavorites.FAVORITES_RATING, mRating);
+
+        return cv;
     }
 
     /**

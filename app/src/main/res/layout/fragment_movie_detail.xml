@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#afafaf"
-    tools:context="com.example.android.movieapp2.MovieDetailFragment">
+    tools:context="com.example.android.movieapp2.DetailFragment">
 
     <!-- TODO: Update blank fragment layout -->
 

@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
-public class DetailsActivity extends AppCompatActivity implements MovieDetailFragment.OnFragmentInteractionListener{
+public class DetailsActivity extends AppCompatActivity implements DetailFragment.OnFragmentInteractionListener{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -17,7 +17,7 @@ public class DetailsActivity extends AppCompatActivity implements MovieDetailFra
         String localID = intent.getStringExtra(getString(R.string.local_id_key));
         String title = intent.getStringExtra(getString(R.string.movie_title_key));
         getSupportFragmentManager().beginTransaction()
-                .add(R.id.detail_container, new MovieDetailFragment().newInstance(localID, title)).commit();
+                .add(R.id.detail_container, new DetailFragment().newInstance(localID, title)).commit();
     }
 
     @Override

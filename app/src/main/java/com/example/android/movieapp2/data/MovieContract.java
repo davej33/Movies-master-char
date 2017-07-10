@@ -50,5 +50,7 @@ public final class MovieContract {
         public static final String FAVORITES_RELEASE_DATE = "date";
         public static final String FAVORITES_PLOT = "plot";
         public static final String FAVORITES_POSTER = "poster";
+        public static final String FAVORITES_FAVORITE = "favorite";
+        public static final String FAVORITES_RATING = "rating";
     }
 }

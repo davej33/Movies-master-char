@@ -1,12 +1,16 @@
 package com.example.android.movieapp2.utils;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.util.Log;
 
 import com.example.android.movieapp2.MainActivity;
 import com.example.android.movieapp2.R;
+import com.example.android.movieapp2.data.MovieContract;
 
+import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -22,7 +26,7 @@ public class FavoriteUtils {
     private static SharedPreferences.Editor sEditor;
     private static Set<String> mSetList;
 
-    public static void addFavorite(Context context, String mTitle) {
+    public static void addFavorite(Context context, String mTitle, ContentValues cv) {
         sPrefs = context.getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE);
         sEditor = sPrefs.edit();
         mSetList = sPrefs.getStringSet(context.getString(R.string.pref_fav_key), null); // get Favorites Set<> from SP
@@ -31,7 +35,9 @@ public class FavoriteUtils {
         sEditor.putStringSet(context.getString(R.string.pref_fav_key), mSetList);
         sEditor.apply();
         MainActivity.setmFavoriteChanged(true);
-        Log.i("FavUtils", "Favorite Movie Added: " + mTitle);
+
+        context.getContentResolver().insert(MovieContract.MovieFavorites.FAVORITE_TABLE_URI, cv);
+
         printFravorites();
     }
 
@@ -45,6 +51,7 @@ public class FavoriteUtils {
         sEditor.apply();
         MainActivity.setmFavoriteChanged(true);
         Log.i("FavUtils", "Favorite Movie Removed: " + mTitle);
+        context.getContentResolver().delete(MovieContract.MovieFavorites.FAVORITE_TABLE_URI, MovieContract.MovieFavorites.FAVORITES_TITLE + "=?", new String[] {mTitle});
         printFravorites();
     }
 
@@ -55,16 +62,17 @@ public class FavoriteUtils {
             return false;
         } else {
             for (String s : mSetList) {
-                if (s.equals(title)){
-                    return true;}
+                if (s.equals(title)) {
+                    return true;
+                }
             }
         }
         return false;
     }
 
-    private static void printFravorites(){
+    private static void printFravorites() {
         Log.i("FavUtils", "************* Start of Favorites List ******************");
-        for (String s: mSetList) {
+        for (String s : mSetList) {
             Log.i("FavUtils", "Favorite Movie: " + s);
         }
         Log.i("FavUtils", "************* End of Favorites List ******************");

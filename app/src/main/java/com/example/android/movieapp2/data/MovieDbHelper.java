@@ -25,7 +25,7 @@ public final class MovieDbHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         final String CREATE_MOVIE_TABLE = "CREATE TABLE " + MovieEntry.MOVIE_TABLE + " (" +
                 MovieEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                MovieEntry.MOVIE_TMDB_ID + " INTEGER UNIQUE NOT NULL, " +
+                MovieEntry.MOVIE_TMDB_ID + " INTEGER NOT NULL, " +
                 MovieEntry.MOVIE_TITLE + " TEXT NOT NULL, " +
                 MovieEntry.MOVIE_RELEASE_DATE + " TEXT NOT NULL, " +
                 MovieEntry.MOVIE_PLOT + " TEXT NOT NULL, " +
@@ -36,11 +36,14 @@ public final class MovieDbHelper extends SQLiteOpenHelper {
 
         final String CREATE_FAVORITE_TABLE = "CREATE TABLE " + MovieContract.MovieFavorites.FAVORITES_TABLE + " (" +
                 MovieContract.MovieFavorites.FAVORITES_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                MovieContract.MovieFavorites.FAVORITES_TMDB_ID+ " INTEGER UNIQUE NOT NULL, " +
-                MovieContract.MovieFavorites.FAVORITES_TITLE + " TEXT NOT NULL, " +
+                MovieContract.MovieFavorites.FAVORITES_TMDB_ID + " INTEGER UNIQUE, " +
+                MovieContract.MovieFavorites.FAVORITES_TITLE + " TEXT UNIQUE NOT NULL, " +
                 MovieContract.MovieFavorites.FAVORITES_RELEASE_DATE + " TEXT NOT NULL, " +
                 MovieContract.MovieFavorites.FAVORITES_PLOT + " TEXT NOT NULL, " +
-                MovieContract.MovieFavorites.FAVORITES_POSTER + " BLOB);";
+                MovieContract.MovieFavorites.FAVORITES_RATING + " FLOAT NOT NULL, " +
+                MovieContract.MovieFavorites.FAVORITES_FAVORITE + " INTEGER DEFAULT 1, " +
+                MovieContract.MovieFavorites.FAVORITES_POSTER + " BLOB, " +
+                "UNIQUE (" + MovieContract.MovieFavorites.FAVORITES_TITLE + ") ON CONFLICT REPLACE);";
 
         db.execSQL(CREATE_MOVIE_TABLE);
         db.execSQL(CREATE_FAVORITE_TABLE);

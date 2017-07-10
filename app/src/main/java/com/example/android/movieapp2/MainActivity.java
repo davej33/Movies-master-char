@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private static final int LANDSCAPE_COLUMNS = 3;
     private static final int PORTRAIT_COLUMNS = 2;
     private static final int POP_RATE_LOADER_ID = 100;
-    private static final int FAVORITES_LOADER_ID = 200;
+    //    private static final int FAVORITES_LOADER_ID = 200;
     private boolean mSortPrefChanged = false;
     private static boolean mFavoriteChanged = false;
     private SharedPreferences.OnSharedPreferenceChangeListener mListener;
@@ -94,26 +94,20 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
                 Log.i(LOG_TAG, "MA-SP run");
                 // compare default value to current value to determine if SP actually changed. This is to prevent
-                // the syncImmediately method from running again when calling Settings for first time
+                // the syncImmediately method from running when calling Settings for first time
                 if (key.equals(getString(R.string.pref_sort_key))) {
                     String prefValue = sharedPreferences.getString(key, null); // get value of changed SP
                     if (prefValue != null && !prefValue.equals(mSortValue)) {
                         mSortValue = prefValue;
                         mSortPrefChanged = true; // set test variable to true so activity will sync onStart()
                     }
+
                 } else {
                     mFavoriteChanged = true;
                 }
             }
         };
         mPref.registerOnSharedPreferenceChangeListener(mListener);
-//        if (SharedPreferences.OnSharedPreferenceChangeListener.class.getSimpleName() == null) {
-//            Log.i(LOG_TAG, "Listener null");
-//        } else {
-//            Log.i(LOG_TAG, "Listener not null" + SharedPreferences.OnSharedPreferenceChangeListener.class.getSimpleName());
-//        }
-//        mSortValue = mPref.getString(getString(R.string.pref_sort_key), getString(R.string.pref_sort_default)); // set current value of sort pref
-
     }
 
     @Override
@@ -123,7 +117,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         if (SharedPreferences.OnSharedPreferenceChangeListener.class.getSimpleName() == null) {
             Log.i(LOG_TAG, "Listener null");
         } else {
-            Log.i(LOG_TAG, "Listener NOT null");
+            Log.i(LOG_TAG, "MA - onStart(): Listener NOT null");
         }
 
         if (mSortPrefChanged) {
@@ -137,6 +131,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                         }
                     }, 1000);
                     mSortPrefChanged = false;
+                    mSortValue = getString(R.string.pref_sort_popularity_value);
                     break;
                 case RATING_VALUE:
                     SyncUtils.syncImmediately(this);
@@ -152,10 +147,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 case FAVORITES_VALUE:
                     if (getSupportLoaderManager().getLoader(POP_RATE_LOADER_ID) != null) {
                         getSupportLoaderManager().destroyLoader(POP_RATE_LOADER_ID);
-                        getSupportLoaderManager().initLoader(FAVORITES_LOADER_ID, null, this);
+                        getSupportLoaderManager().initLoader(POP_RATE_LOADER_ID, null, this);
                     } else {
-                        getSupportLoaderManager().restartLoader(FAVORITES_LOADER_ID, null, this);
+                        getSupportLoaderManager().restartLoader(POP_RATE_LOADER_ID, null, this);
                     }
+                    mSortPrefChanged = false;
                     mSortValue = getString(R.string.pref_sort_fav_value);
             }
         }
@@ -189,19 +185,46 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             case R.id.action_settings:
                 startActivity(new Intent(this, SettingsActivity.class));
                 return true;
+            case R.id.check_fav_db:
+                checkFavDB();
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
+    private void checkFavDB() {
+//        String[] projection = {MovieContract.MovieFavorites.FAVORITES_TITLE};
+        Cursor c = this.getContentResolver().query(MovieContract.MovieFavorites.FAVORITE_TABLE_URI, null, null, null, null);
+        if (c != null) {
+            c.moveToFirst();
+            Log.i(LOG_TAG, "Cursor count: " + c.getCount());
+
+            do {
+                int col = c.getColumnIndex(MovieContract.MovieFavorites.FAVORITES_TITLE);
+                String title = c.getString(col);
+                int col2 = c.getColumnIndex(MovieContract.MovieFavorites.FAVORITES_POSTER);
+                String p = c.getString(col2);
+                int col3 = c.getColumnIndex(MovieContract.MovieFavorites.FAVORITES_RATING);
+                String r = c.getString(col3);
+                int col4 = c.getColumnIndex(MovieContract.MovieFavorites.FAVORITES_RELEASE_DATE);
+                String d = c.getString(col4);
+                Log.i(LOG_TAG, "Favorite Title/poster/rating/date: " + title + " / " + p+ " / " + r+ " / " + d);
+            } while (c.moveToNext());
+            c.close();
+        }
+    }
+
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        switch (id) {
-            case POP_RATE_LOADER_ID:
+
+        switch (mSortValue) {
+            case RATING_VALUE:
+            case POPULAR_VALUE:
                 return new CursorLoader(this,
                         MovieContract.MovieEntry.MOVIE_TABLE_URI, null, null, null, null);
-            case FAVORITES_LOADER_ID:
-                return new CursorLoader(this, MovieContract.MovieFavorites.FAVORITE_TABLE_URI, null, null, null, null);
+            case FAVORITES_VALUE:
+                String[] projectionFavorites = {MovieContract.MovieFavorites.FAVORITES_TITLE, MovieContract.MovieFavorites.FAVORITES_POSTER, MovieContract.MovieFavorites.FAVORITES_FAVORITE};
+                return new CursorLoader(this, MovieContract.MovieFavorites.FAVORITE_TABLE_URI, projectionFavorites, null, null, null);
             default:
                 return null;
         }
