@@ -26,7 +26,7 @@ import com.example.android.movieapp2.data.MovieContract;
 import com.example.android.movieapp2.utils.FavoriteUtils;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
-import com.example.android.movieapp2.data.MovieContract.MovieFavorites;
+
 import java.util.Set;
 
 
@@ -67,6 +67,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     private ImageView mPosterV;
     private ToggleButton mFavorite_button;
     private int mUpdatedFavoriteState;
+    private static final int FAVORITED = 1;
+    private static final int NOT_FAVORITED = 0;
 
     private OnFragmentInteractionListener mListener;
 
@@ -135,12 +137,14 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, final boolean b) {
                 if(b){
-                    ContentValues cv = getContentValues();
-                    FavoriteUtils.addFavorite(getContext(), mTitle, cv);
-
+                    ContentValues cv = new ContentValues();
+                    cv.put(MovieContract.MovieEntry.MOVIE_FAVORITE, FAVORITED);
+                    FavoriteUtils.addFavorite(getContext(), mTitle, mLocalID, cv);
                 } else {
                     try {
-                        FavoriteUtils.removeFavorite(getContext(), mTitle);
+                        ContentValues cv = new ContentValues();
+                        cv.put(MovieContract.MovieEntry.MOVIE_FAVORITE, NOT_FAVORITED);
+                        FavoriteUtils.removeFavorite(getContext(), mTitle, mLocalID, cv);
                     } catch (Exception e) {
                         Log.e(LOG_TAG,"error removing favorite: " + mTitle);
                     }
@@ -257,17 +261,17 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         super.onSaveInstanceState(outState);
     }
 
-    private ContentValues getContentValues() {
-
-        ContentValues cv = new ContentValues();
-        cv.put(MovieFavorites.FAVORITES_TITLE, mTitle);
-        cv.put(MovieFavorites.FAVORITES_PLOT, mPlot);
-        cv.put(MovieFavorites.FAVORITES_RELEASE_DATE, mReleaseDate);
-        cv.put(MovieFavorites.FAVORITES_POSTER, mPoster);
-        cv.put(MovieFavorites.FAVORITES_RATING, mRating);
-
-        return cv;
-    }
+//    private ContentValues getContentValues() {
+//
+//        ContentValues cv = new ContentValues();
+//        cv.put(MovieFavorites.FAVORITES_TITLE, mTitle);
+//        cv.put(MovieFavorites.FAVORITES_PLOT, mPlot);
+//        cv.put(MovieFavorites.FAVORITES_RELEASE_DATE, mReleaseDate);
+//        cv.put(MovieFavorites.FAVORITES_POSTER, mPoster);
+//        cv.put(MovieFavorites.FAVORITES_RATING, mRating);
+//
+//        return cv;
+//    }
 
     /**
      * This interface must be implemented by activities that contain this

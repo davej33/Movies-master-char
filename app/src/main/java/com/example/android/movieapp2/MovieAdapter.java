@@ -32,7 +32,6 @@ public final class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieV
     private String mTitleFav;
 
 
-
     public interface ListItemClickListener {
         void onListItemClick(int clickedItemIndex);
     }
@@ -97,21 +96,28 @@ public final class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieV
         }
 
 
-
         holder.favoriteCheckBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                int idCol = 0;
+                String id = null;
                 if (holder.favoriteCheckBox.isChecked()) {
                     mCursor.moveToPosition(holder.getAdapterPosition());
                     mTitleFav = mCursor.getString(titleColId);
-                    ContentValues cv = adapterGetContentValues(mTitleFav, holder.getAdapterPosition());
-                    FavoriteUtils.addFavorite(mContext, mTitleFav, cv);
+                    idCol = mCursor.getColumnIndex(MovieContract.MovieEntry._ID);
+                    id = mCursor.getString(idCol);
+                    ContentValues cv = new ContentValues();
+                    cv.put(MovieContract.MovieEntry.MOVIE_FAVORITE, 1); // TODO: fix
+                    FavoriteUtils.addFavorite(mContext, mTitleFav, id, cv);
                 } else {
                     mCursor.moveToPosition(holder.getAdapterPosition());
                     mTitleFav = mCursor.getString(titleColId);
+                    idCol = mCursor.getColumnIndex(MovieContract.MovieEntry._ID);
+                    id = mCursor.getString(idCol);
                     try {
-                        FavoriteUtils.removeFavorite(mContext, mTitleFav);
+                        ContentValues cv = new ContentValues();
+                        cv.put(MovieContract.MovieEntry.MOVIE_FAVORITE, 0); // TODO: fix
+                        FavoriteUtils.removeFavorite(mContext, mTitleFav, id, cv);
                     } catch (Exception e) {
                         Log.e(LOG_TAG, "Movie not in Favorites");
                     }
@@ -120,37 +126,37 @@ public final class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieV
         });
     }
 
-    private ContentValues adapterGetContentValues(String title, int position) {
-        mCursor.moveToPosition(position);
-
-        // release date
-        int releaseDateCol = mCursor.getColumnIndex(MovieContract.MovieEntry.MOVIE_RELEASE_DATE);
-        int releaseDate = mCursor.getInt(releaseDateCol);
-        String releaseDateString = String.valueOf(releaseDate);
-
-        // plot
-        int plotCol = mCursor.getColumnIndex(MovieContract.MovieEntry.MOVIE_PLOT);
-        String plot = mCursor.getString(plotCol);
-
-        // poster
-        int posterColId = mCursor.getColumnIndex(MovieContract.MovieEntry.MOVIE_POSTER);
-        String poster = mCursor.getString(posterColId);
-
-        // rating bar
-        int rateCol = mCursor.getColumnIndex(MovieContract.MovieEntry.MOVIE_RATING);
-        float rating = (float) (mCursor.getDouble(rateCol) / 2);
-
-
-        ContentValues cv = new ContentValues();
-        cv.put(MovieContract.MovieFavorites.FAVORITES_TITLE, title);
-        cv.put(MovieContract.MovieFavorites.FAVORITES_PLOT, plot);
-        cv.put(MovieContract.MovieFavorites.FAVORITES_RELEASE_DATE, releaseDateString);
-        cv.put(MovieContract.MovieFavorites.FAVORITES_POSTER, poster);
-        cv.put(MovieContract.MovieFavorites.FAVORITES_RATING, rating);
-
-        return cv;
-
-    }
+//    private ContentValues adapterGetContentValues(String title, int position) {
+//        mCursor.moveToPosition(position);
+//
+//        // release date
+//        int releaseDateCol = mCursor.getColumnIndex(MovieContract.MovieEntry.MOVIE_RELEASE_DATE);
+//        int releaseDate = mCursor.getInt(releaseDateCol);
+//        String releaseDateString = String.valueOf(releaseDate);
+//
+//        // plot
+//        int plotCol = mCursor.getColumnIndex(MovieContract.MovieEntry.MOVIE_PLOT);
+//        String plot = mCursor.getString(plotCol);
+//
+//        // poster
+//        int posterColId = mCursor.getColumnIndex(MovieContract.MovieEntry.MOVIE_POSTER);
+//        String poster = mCursor.getString(posterColId);
+//
+//        // rating bar
+//        int rateCol = mCursor.getColumnIndex(MovieContract.MovieEntry.MOVIE_RATING);
+//        float rating = (float) (mCursor.getDouble(rateCol) / 2);
+//
+//
+//        ContentValues cv = new ContentValues();
+//        cv.put(MovieContract.MovieFavorites.FAVORITES_TITLE, title);
+//        cv.put(MovieContract.MovieFavorites.FAVORITES_PLOT, plot);
+//        cv.put(MovieContract.MovieFavorites.FAVORITES_RELEASE_DATE, releaseDateString);
+//        cv.put(MovieContract.MovieFavorites.FAVORITES_POSTER, poster);
+//        cv.put(MovieContract.MovieFavorites.FAVORITES_RATING, rating);
+//
+//        return cv;
+//
+//    }
 
 
     @Override

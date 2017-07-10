@@ -26,22 +26,21 @@ public class FavoriteUtils {
     private static SharedPreferences.Editor sEditor;
     private static Set<String> mSetList;
 
-    public static void addFavorite(Context context, String mTitle, ContentValues cv) {
+    public static void addFavorite(Context context, String title, String localID, ContentValues cv) {
         sPrefs = context.getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE);
         sEditor = sPrefs.edit();
         mSetList = sPrefs.getStringSet(context.getString(R.string.pref_fav_key), null); // get Favorites Set<> from SP
         if (mSetList == null) mSetList = new HashSet<>();
-        mSetList.add(mTitle);
+        mSetList.add(title);
         sEditor.putStringSet(context.getString(R.string.pref_fav_key), mSetList);
         sEditor.apply();
         MainActivity.setmFavoriteChanged(true);
-
-        context.getContentResolver().insert(MovieContract.MovieFavorites.FAVORITE_TABLE_URI, cv);
-
+        Uri updateUri = Uri.parse(MovieContract.MovieEntry.MOVIE_TABLE_URI + "/" + localID);
+        context.getContentResolver().update(updateUri, cv, null, null);
         printFravorites();
     }
 
-    public static void removeFavorite(Context context, String mTitle) throws Exception {
+    public static void removeFavorite(Context context, String mTitle, String localID, ContentValues cv) throws Exception {
         sPrefs = context.getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE);
         sEditor = sPrefs.edit();
         mSetList = sPrefs.getStringSet(context.getString(R.string.pref_fav_key), null); // get Favorites Set<> from SP
@@ -50,8 +49,10 @@ public class FavoriteUtils {
         sEditor.putStringSet(context.getString(R.string.pref_fav_key), mSetList);
         sEditor.apply();
         MainActivity.setmFavoriteChanged(true);
+        Uri updateUri = Uri.parse(MovieContract.MovieEntry.MOVIE_TABLE_URI + "/" + localID);
+        context.getContentResolver().update(updateUri, cv, null, null);
         Log.i("FavUtils", "Favorite Movie Removed: " + mTitle);
-        context.getContentResolver().delete(MovieContract.MovieFavorites.FAVORITE_TABLE_URI, MovieContract.MovieFavorites.FAVORITES_TITLE + "=?", new String[] {mTitle});
+
         printFravorites();
     }
 

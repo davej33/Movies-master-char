@@ -10,21 +10,19 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a7f1a183-e7d2-42a9-91e7-d5556b6b2372" name="Default" comment="">
-      <change type="MOVED" beforePath="$PROJECT_DIR$/app/src/main/java/com/example/android/movieapp2/MovieDetailFragment.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/android/movieapp2/DetailFragment.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/3.3/taskArtifacts/fileHashes.bin" afterPath="$PROJECT_DIR$/.gradle/3.3/taskArtifacts/fileHashes.bin" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/3.3/taskArtifacts/fileSnapshots.bin" afterPath="$PROJECT_DIR$/.gradle/3.3/taskArtifacts/fileSnapshots.bin" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/3.3/taskArtifacts/taskArtifacts.bin" afterPath="$PROJECT_DIR$/.gradle/3.3/taskArtifacts/taskArtifacts.bin" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/3.3/taskArtifacts/taskArtifacts.lock" afterPath="$PROJECT_DIR$/.gradle/3.3/taskArtifacts/taskArtifacts.lock" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/example/android/movieapp2/DetailsActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/android/movieapp2/DetailsActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/example/android/movieapp2/DetailFragment.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/android/movieapp2/DetailFragment.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/example/android/movieapp2/MainActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/android/movieapp2/MainActivity.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/example/android/movieapp2/MovieAdapter.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/android/movieapp2/MovieAdapter.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/example/android/movieapp2/data/MovieContentProvider.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/android/movieapp2/data/MovieContentProvider.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/example/android/movieapp2/data/MovieContract.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/android/movieapp2/data/MovieContract.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/example/android/movieapp2/data/MovieDbHelper.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/android/movieapp2/data/MovieDbHelper.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/example/android/movieapp2/sync/SyncTask.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/android/movieapp2/sync/SyncTask.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/example/android/movieapp2/utils/FavoriteUtils.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/android/movieapp2/utils/FavoriteUtils.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_movie_detail.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_movie_detail.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/menu/main_menu.xml" afterPath="$PROJECT_DIR$/app/src/main/res/menu/main_menu.xml" />
     </list>
     <ignored path="Movies-master.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -127,11 +125,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="DetailFragment.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="DetailFragment.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/android/movieapp2/DetailFragment.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="112">
-              <caret line="193" column="34" selection-start-line="193" selection-start-column="34" selection-end-line="193" selection-end-column="34" />
+            <state relative-caret-position="659">
+              <caret line="145" column="87" selection-start-line="145" selection-start-column="87" selection-end-line="145" selection-end-column="87" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -139,21 +137,40 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="MainActivity.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="MainActivity.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/android/movieapp2/MainActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="569">
-              <caret line="119" column="44" selection-start-line="119" selection-start-column="44" selection-end-line="119" selection-end-column="44" />
+            <state relative-caret-position="508">
+              <caret line="233" column="45" selection-start-line="233" selection-start-column="45" selection-end-line="233" selection-end-column="45" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="method#onCreate#0;class#MainActivity#0" expanded="false" />
-                <element signature="e#5671#5717#0" expanded="true" />
-                <element signature="e#10042#10043#0" expanded="true" />
-                <element signature="e#10083#10084#0" expanded="true" />
                 <element signature="method#getWindowWidth#0;class#MainActivity#0" expanded="false" />
-                <element signature="e#10943#10958#0" expanded="false" />
+                <element signature="e#11650#11665#0" expanded="false" />
                 <element signature="method#onSaveInstanceState#0;class#MainActivity#0" expanded="false" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="FavoriteUtils.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/android/movieapp2/utils/FavoriteUtils.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="652">
+              <caret line="56" column="5" selection-start-line="56" selection-start-column="5" selection-end-line="56" selection-end-column="5" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="MovieContentProvider.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/android/movieapp2/data/MovieContentProvider.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="268">
+              <caret line="82" column="125" selection-start-line="82" selection-start-column="125" selection-end-line="82" selection-end-column="125" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -2043,20 +2060,20 @@
         <option value="$PROJECT_DIR$/app/src/main/res/values/strings.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/values/arrays.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/example/android/movieapp2/sync/MovieIntentService.java" />
+        <option value="$PROJECT_DIR$/app/src/main/res/menu/main_menu.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/example/android/movieapp2/sync/SyncTask.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/example/android/movieapp2/data/MovieContract.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/example/android/movieapp2/utils/FavoriteUtils.java" />
-        <option value="$PROJECT_DIR$/app/src/main/res/menu/main_menu.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/example/android/movieapp2/data/MovieDbHelper.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/example/android/movieapp2/MovieAdapter.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/example/android/movieapp2/MainActivity.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/example/android/movieapp2/utils/FavoriteUtils.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/example/android/movieapp2/DetailFragment.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/example/android/movieapp2/MovieAdapter.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/example/android/movieapp2/data/MovieContentProvider.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/example/android/movieapp2/MainActivity.java" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="280" />
+    <option name="x" value="278" />
     <option name="y" value="33" />
     <option name="width" value="2067" />
     <option name="height" value="1347" />
@@ -2646,7 +2663,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="280" y="33" width="2067" height="1347" extended-state="0" />
+    <frame x="278" y="33" width="2067" height="1347" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3292683" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
@@ -2712,11 +2729,8 @@
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="method#onCreate#0;class#MainActivity#0" expanded="false" />
-            <element signature="e#5671#5717#0" expanded="true" />
-            <element signature="e#10042#10043#0" expanded="true" />
-            <element signature="e#10083#10084#0" expanded="true" />
             <element signature="method#getWindowWidth#0;class#MainActivity#0" expanded="false" />
-            <element signature="e#10943#10958#0" expanded="false" />
+            <element signature="e#11650#11665#0" expanded="false" />
             <element signature="method#onSaveInstanceState#0;class#MainActivity#0" expanded="false" />
           </folding>
         </state>
@@ -2758,11 +2772,8 @@
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="method#onCreate#0;class#MainActivity#0" expanded="false" />
-            <element signature="e#5671#5717#0" expanded="true" />
-            <element signature="e#10042#10043#0" expanded="true" />
-            <element signature="e#10083#10084#0" expanded="true" />
             <element signature="method#getWindowWidth#0;class#MainActivity#0" expanded="false" />
-            <element signature="e#10943#10958#0" expanded="false" />
+            <element signature="e#11650#11665#0" expanded="false" />
             <element signature="method#onSaveInstanceState#0;class#MainActivity#0" expanded="false" />
           </folding>
         </state>
@@ -2804,11 +2815,8 @@
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="method#onCreate#0;class#MainActivity#0" expanded="false" />
-            <element signature="e#5671#5717#0" expanded="true" />
-            <element signature="e#10042#10043#0" expanded="true" />
-            <element signature="e#10083#10084#0" expanded="true" />
             <element signature="method#getWindowWidth#0;class#MainActivity#0" expanded="false" />
-            <element signature="e#10943#10958#0" expanded="false" />
+            <element signature="e#11650#11665#0" expanded="false" />
             <element signature="method#onSaveInstanceState#0;class#MainActivity#0" expanded="false" />
           </folding>
         </state>
@@ -2861,6 +2869,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="120">
           <caret line="24" column="19" selection-start-line="24" selection-start-column="19" selection-end-line="24" selection-end-column="19" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -2906,6 +2915,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="621">
           <caret line="62" column="9" selection-start-line="62" selection-start-column="9" selection-end-line="62" selection-end-column="9" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -2999,26 +3009,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/android/movieapp2/sync/SyncTask.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="331">
-          <caret line="43" column="6" selection-start-line="43" selection-start-column="6" selection-end-line="60" selection-end-column="11" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/android/movieapp2/DetailsActivity.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="300">
           <caret line="24" column="64" selection-start-line="24" selection-start-column="64" selection-end-line="24" selection-end-column="64" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/android/movieapp2/data/MovieContract.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="307">
-          <caret line="27" column="8" selection-start-line="27" selection-start-column="8" selection-end-line="27" selection-end-column="60" />
           <folding />
         </state>
       </provider>
@@ -3036,66 +3030,79 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/android/movieapp2/sync/SyncTask.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="192">
+          <caret line="23" column="27" selection-start-line="23" selection-start-column="27" selection-end-line="23" selection-end-column="27" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/android/movieapp2/data/MovieDbHelper.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="585">
-          <caret line="45" column="98" selection-start-line="45" selection-start-column="98" selection-end-line="45" selection-end-column="98" />
+        <state relative-caret-position="450">
+          <caret line="36" column="80" selection-start-line="36" selection-start-column="80" selection-end-line="36" selection-end-column="80" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/android/movieapp2/data/MovieContentProvider.java">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/android/movieapp2/data/MovieContract.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="345">
-          <caret line="127" column="9" selection-start-line="127" selection-start-column="9" selection-end-line="127" selection-end-column="9" />
+        <state relative-caret-position="537">
+          <caret line="38" column="4" selection-start-line="38" selection-start-column="4" selection-end-line="55" selection-end-column="7" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/android/movieapp2/utils/FavoriteUtils.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="607">
-          <caret line="53" column="169" selection-start-line="53" selection-start-column="169" selection-end-line="53" selection-end-column="169" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/android/movieapp2/MovieAdapter.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="600">
-          <caret line="105" column="72" selection-start-line="105" selection-start-column="72" selection-end-line="105" selection-end-column="72" />
+        <state relative-caret-position="401">
+          <caret line="103" column="58" selection-start-line="103" selection-start-column="58" selection-end-line="103" selection-end-column="58" />
           <folding>
-            <element signature="e#3377#4277#0" expanded="true" />
-            <element signature="e#4276#4277#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/android/movieapp2/MainActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="569">
-          <caret line="119" column="44" selection-start-line="119" selection-start-column="44" selection-end-line="119" selection-end-column="44" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="method#onCreate#0;class#MainActivity#0" expanded="false" />
-            <element signature="e#5671#5717#0" expanded="true" />
-            <element signature="e#10042#10043#0" expanded="true" />
-            <element signature="e#10083#10084#0" expanded="true" />
-            <element signature="method#getWindowWidth#0;class#MainActivity#0" expanded="false" />
-            <element signature="e#10943#10958#0" expanded="false" />
-            <element signature="method#onSaveInstanceState#0;class#MainActivity#0" expanded="false" />
+            <element signature="e#3375#4811#0" expanded="true" />
+            <element signature="e#4810#4811#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/android/movieapp2/DetailFragment.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="112">
-          <caret line="193" column="34" selection-start-line="193" selection-start-column="34" selection-end-line="193" selection-end-column="34" />
+        <state relative-caret-position="659">
+          <caret line="145" column="87" selection-start-line="145" selection-start-column="87" selection-end-line="145" selection-end-column="87" />
           <folding>
             <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/android/movieapp2/utils/FavoriteUtils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="652">
+          <caret line="56" column="5" selection-start-line="56" selection-start-column="5" selection-end-line="56" selection-end-column="5" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/android/movieapp2/data/MovieContentProvider.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="268">
+          <caret line="82" column="125" selection-start-line="82" selection-start-column="125" selection-end-line="82" selection-end-column="125" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/android/movieapp2/MainActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="508">
+          <caret line="233" column="45" selection-start-line="233" selection-start-column="45" selection-end-line="233" selection-end-column="45" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="method#onCreate#0;class#MainActivity#0" expanded="false" />
+            <element signature="method#getWindowWidth#0;class#MainActivity#0" expanded="false" />
+            <element signature="e#11650#11665#0" expanded="false" />
+            <element signature="method#onSaveInstanceState#0;class#MainActivity#0" expanded="false" />
           </folding>
         </state>
       </provider>

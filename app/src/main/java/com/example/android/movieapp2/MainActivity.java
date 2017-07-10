@@ -31,11 +31,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private static final String POPULAR_VALUE = "popularity.desc";
     private static final String RATING_VALUE = "vote_average.desc";
     private static final String FAVORITES_VALUE = "favorites";
+    private static final String FAVORITED_DB_VALUE = "1";
+
     private MovieAdapter mAdapter;
     private static final int LANDSCAPE_COLUMNS = 3;
     private static final int PORTRAIT_COLUMNS = 2;
-    private static final int POP_RATE_LOADER_ID = 100;
-    //    private static final int FAVORITES_LOADER_ID = 200;
+    private static final int LOADER_ID = 100;
     private boolean mSortPrefChanged = false;
     private static boolean mFavoriteChanged = false;
     private SharedPreferences.OnSharedPreferenceChangeListener mListener;
@@ -145,11 +146,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                     mSortValue = getString(R.string.pref_sort_rating_value); // TODO: better manage SP change, fix listener.
                     break;
                 case FAVORITES_VALUE:
-                    if (getSupportLoaderManager().getLoader(POP_RATE_LOADER_ID) != null) {
-                        getSupportLoaderManager().destroyLoader(POP_RATE_LOADER_ID);
-                        getSupportLoaderManager().initLoader(POP_RATE_LOADER_ID, null, this);
+                    if (getSupportLoaderManager().getLoader(LOADER_ID) != null) {
+                        getSupportLoaderManager().destroyLoader(LOADER_ID);
+                        getSupportLoaderManager().initLoader(LOADER_ID, null, this);
                     } else {
-                        getSupportLoaderManager().restartLoader(POP_RATE_LOADER_ID, null, this);
+                        getSupportLoaderManager().restartLoader(LOADER_ID, null, this);
                     }
                     mSortPrefChanged = false;
                     mSortValue = getString(R.string.pref_sort_fav_value);
@@ -165,10 +166,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     private void displayData() {
-        if (getSupportLoaderManager().getLoader(POP_RATE_LOADER_ID) != null) {
-            getSupportLoaderManager().restartLoader(POP_RATE_LOADER_ID, null, this);
+        if (getSupportLoaderManager().getLoader(LOADER_ID) != null) {
+            getSupportLoaderManager().restartLoader(LOADER_ID, null, this);
         } else {
-            getSupportLoaderManager().initLoader(POP_RATE_LOADER_ID, null, this);
+            getSupportLoaderManager().initLoader(LOADER_ID, null, this);
         }
     }
 
@@ -193,22 +194,27 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     private void checkFavDB() {
-//        String[] projection = {MovieContract.MovieFavorites.FAVORITES_TITLE};
-        Cursor c = this.getContentResolver().query(MovieContract.MovieFavorites.FAVORITE_TABLE_URI, null, null, null, null);
+        String selection = MovieContract.MovieEntry.MOVIE_FAVORITE + "=?";
+        String[] selectionArgs = {"1"};
+        Cursor c = this.getContentResolver().query(MovieContract.MovieEntry.MOVIE_TABLE_URI, null, selection, selectionArgs, null);
         if (c != null) {
             c.moveToFirst();
             Log.i(LOG_TAG, "Cursor count: " + c.getCount());
 
             do {
-                int col = c.getColumnIndex(MovieContract.MovieFavorites.FAVORITES_TITLE);
+                int colId = c.getColumnIndex(MovieContract.MovieEntry._ID);
+                String id = c.getString(colId);
+                int col = c.getColumnIndex(MovieContract.MovieEntry.MOVIE_TITLE);
                 String title = c.getString(col);
-                int col2 = c.getColumnIndex(MovieContract.MovieFavorites.FAVORITES_POSTER);
+                int col2 = c.getColumnIndex(MovieContract.MovieEntry.MOVIE_POSTER);
                 String p = c.getString(col2);
-                int col3 = c.getColumnIndex(MovieContract.MovieFavorites.FAVORITES_RATING);
+                int col3 = c.getColumnIndex(MovieContract.MovieEntry.MOVIE_RATING);
                 String r = c.getString(col3);
-                int col4 = c.getColumnIndex(MovieContract.MovieFavorites.FAVORITES_RELEASE_DATE);
+                int col4 = c.getColumnIndex(MovieContract.MovieEntry.MOVIE_RELEASE_DATE);
                 String d = c.getString(col4);
-                Log.i(LOG_TAG, "Favorite Title/poster/rating/date: " + title + " / " + p+ " / " + r+ " / " + d);
+                int col5 = c.getColumnIndex(MovieContract.MovieEntry.MOVIE_FAVORITE);
+                String f = c.getString(col5);
+                Log.i(LOG_TAG, "Favorite ID/Title/poster/rating/date/FAV: " + id + " / " + title + " / " + p + " / " + r + " / " + d + " / " + f);
             } while (c.moveToNext());
             c.close();
         }
@@ -216,15 +222,21 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        String[] projection = {MovieContract.MovieEntry._ID, MovieContract.MovieEntry.MOVIE_TITLE, MovieContract.MovieEntry.MOVIE_POSTER, MovieContract.MovieEntry.MOVIE_FAVORITE};
 
         switch (mSortValue) {
             case RATING_VALUE:
-            case POPULAR_VALUE:
+                String ratingSortOrder = MovieContract.MovieEntry.MOVIE_RATING + " DESC";
                 return new CursorLoader(this,
-                        MovieContract.MovieEntry.MOVIE_TABLE_URI, null, null, null, null);
+                        MovieContract.MovieEntry.MOVIE_TABLE_URI, projection, null, null, ratingSortOrder);
+            case POPULAR_VALUE:
+                String popSortOrder = MovieContract.MovieEntry.MOVIE_POPULARITY + " DESC";
+                return new CursorLoader(this,
+                        MovieContract.MovieEntry.MOVIE_TABLE_URI, projection, null, null, popSortOrder);
             case FAVORITES_VALUE:
-                String[] projectionFavorites = {MovieContract.MovieFavorites.FAVORITES_TITLE, MovieContract.MovieFavorites.FAVORITES_POSTER, MovieContract.MovieFavorites.FAVORITES_FAVORITE};
-                return new CursorLoader(this, MovieContract.MovieFavorites.FAVORITE_TABLE_URI, projectionFavorites, null, null, null);
+                String selection = MovieContract.MovieEntry.MOVIE_FAVORITE + "=?";
+                String[] selectionArgs = {FAVORITED_DB_VALUE};
+                return new CursorLoader(this, MovieContract.MovieEntry.MOVIE_TABLE_URI, projection, selection, selectionArgs, null);
             default:
                 return null;
         }

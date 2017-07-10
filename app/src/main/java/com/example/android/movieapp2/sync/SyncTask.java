@@ -17,7 +17,7 @@ import org.json.JSONException;
 
 public final class SyncTask {
 
-    static int test;
+
 
     static void syncData(Context context) {
 
@@ -25,17 +25,17 @@ public final class SyncTask {
         ContentValues[] cv = null;
         try {
             cv = NetworkUtils.fetchData(context);
-            test++;
-            Log.i("SyncTask","Network Utils Run Count: " + test);
+            int test = 0;
+            Log.i("SyncTask","Network Utils Run Count: " + ++test);
         } catch (JSONException e) {
             e.printStackTrace();
         }
         Log.i("SyncTask", "cv size " + cv.length );
         try {
             if (cv.length > 0) {
-                int rowsDeleted = context.getContentResolver().delete(MovieContract.MovieEntry.MOVIE_TABLE_URI, null, null);
+//                int rowsDeleted = context.getContentResolver().delete(MovieContract.MovieEntry.MOVIE_TABLE_URI, null, null);
                 int rowsInserted = context.getContentResolver().bulkInsert(MovieContract.MovieEntry.MOVIE_TABLE_URI, cv);
-                Log.i("SyncTask", "deleted/inserted: " + rowsDeleted + "/" + rowsInserted);
+                Log.i("SyncTask", "inserted: " + rowsInserted);
             }
         }catch (SQLException e) {
             Log.i("SyncTask", "SQL error: " + e );
