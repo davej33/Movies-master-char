@@ -52,13 +52,6 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     // loader ID
     private static final int DETAIL_LOADER_ID = 111;
 
-    // cursor and contentValue vars
-//    private Cursor mCursor;
-    private String mReleaseDate;
-    private String mPlot;
-    private String mPoster;
-    private float mRating;
-
     // views
     private TextView mTitleV;
     private TextView mReleaseV;
@@ -66,7 +59,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     private RatingBar mRatingBar;
     private ImageView mPosterV;
     private ToggleButton mFavorite_button;
-    private int mUpdatedFavoriteState;
+
+    // db favorite-state constants
     private static final int FAVORITED = 1;
     private static final int NOT_FAVORITED = 0;
 
@@ -211,17 +205,17 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         // release date
         int releaseDateCol = data.getColumnIndex(MovieContract.MovieEntry.MOVIE_RELEASE_DATE);
         int releaseDate = data.getInt(releaseDateCol);
-        mReleaseDate = "(" + String.valueOf(releaseDate) + ")";
+        String mReleaseDate = "(" + String.valueOf(releaseDate) + ")";
         mReleaseV.setText(mReleaseDate);
 
         // plot
         int plotCol = data.getColumnIndex(MovieContract.MovieEntry.MOVIE_PLOT);
-        mPlot = data.getString(plotCol);
+        String mPlot = data.getString(plotCol);
         mPlotV.setText(mPlot);
 
         // rating bar
         int rateCol = data.getColumnIndex(MovieContract.MovieEntry.MOVIE_RATING);
-        mRating = (float) (data.getDouble(rateCol) / 2);
+        float mRating = (float) (data.getDouble(rateCol) / 2);
         mRatingBar.setRating(mRating);
 
         // favorite state
@@ -233,7 +227,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
         // poster
         int posterColId = data.getColumnIndex(MovieContract.MovieEntry.MOVIE_POSTER);
-        mPoster = data.getString(posterColId);
+        String mPoster = data.getString(posterColId);
         Picasso.with(getContext())
                 .load(mPoster)
                 .error(R.drawable.error)
@@ -260,18 +254,6 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
     }
-
-//    private ContentValues getContentValues() {
-//
-//        ContentValues cv = new ContentValues();
-//        cv.put(MovieFavorites.FAVORITES_TITLE, mTitle);
-//        cv.put(MovieFavorites.FAVORITES_PLOT, mPlot);
-//        cv.put(MovieFavorites.FAVORITES_RELEASE_DATE, mReleaseDate);
-//        cv.put(MovieFavorites.FAVORITES_POSTER, mPoster);
-//        cv.put(MovieFavorites.FAVORITES_RATING, mRating);
-//
-//        return cv;
-//    }
 
     /**
      * This interface must be implemented by activities that contain this

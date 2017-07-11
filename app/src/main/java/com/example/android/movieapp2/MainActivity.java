@@ -121,6 +121,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             Log.i(LOG_TAG, "MA - onStart(): Listener NOT null");
         }
 
+        // if sort pref has changed, take action on new sort value
         if (mSortPrefChanged) {
             switch (mSortValue) {
                 case POPULAR_VALUE:
@@ -197,7 +198,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         String selection = MovieContract.MovieEntry.MOVIE_FAVORITE + "=?";
         String[] selectionArgs = {"1"};
         Cursor c = this.getContentResolver().query(MovieContract.MovieEntry.MOVIE_TABLE_URI, null, selection, selectionArgs, null);
-        if (c != null) {
+        if (c != null && c.getCount() > 0 ) {
             c.moveToFirst();
             Log.i(LOG_TAG, "Cursor count: " + c.getCount());
 
@@ -217,6 +218,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 Log.i(LOG_TAG, "Favorite ID/Title/poster/rating/date/FAV: " + id + " / " + title + " / " + p + " / " + r + " / " + d + " / " + f);
             } while (c.moveToNext());
             c.close();
+        } else {
+            Toast.makeText(this, "No Favorited Movies", Toast.LENGTH_SHORT).show();
         }
     }
 

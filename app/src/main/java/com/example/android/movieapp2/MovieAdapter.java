@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.ToggleButton;
 
 import com.example.android.movieapp2.data.MovieContract;
 import com.example.android.movieapp2.utils.FavoriteUtils;
@@ -188,13 +189,13 @@ public final class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieV
     public class MovieViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         ImageView poster;
-        CheckBox favoriteCheckBox;
+        ToggleButton favoriteCheckBox;
 
         public MovieViewHolder(View itemView) {
             super(itemView);
 
             poster = (ImageView) itemView.findViewById(R.id.cover_image);
-            favoriteCheckBox = (CheckBox) itemView.findViewById(R.id.favorite_button);
+            favoriteCheckBox = (ToggleButton) itemView.findViewById(R.id.favorite_button);
             itemView.setOnClickListener(this);
         }
 

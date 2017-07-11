@@ -34,21 +34,9 @@ public final class MovieDbHelper extends SQLiteOpenHelper {
                 MovieEntry.MOVIE_PREFERENCE_TYPE + " INTEGER, " +
                 MovieEntry.MOVIE_FAVORITE + " INTEGER DEFAULT 0, " +
                 MovieEntry.MOVIE_POSTER + " BLOB, " +
-                "UNIQUE (" + MovieEntry.MOVIE_TMDB_ID + ") ON CONFLICT REPLACE);";
-
-//        final String CREATE_FAVORITE_TABLE = "CREATE TABLE " + MovieContract.MovieFavorites.FAVORITES_TABLE + " (" +
-//                MovieContract.MovieFavorites.FAVORITES_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-//                MovieContract.MovieFavorites.FAVORITES_TMDB_ID + " INTEGER UNIQUE, " +
-//                MovieContract.MovieFavorites.FAVORITES_TITLE + " TEXT UNIQUE NOT NULL, " +
-//                MovieContract.MovieFavorites.FAVORITES_RELEASE_DATE + " TEXT NOT NULL, " +
-//                MovieContract.MovieFavorites.FAVORITES_PLOT + " TEXT NOT NULL, " +
-//                MovieContract.MovieFavorites.FAVORITES_RATING + " FLOAT NOT NULL, " +
-//                MovieContract.MovieFavorites.FAVORITES_FAVORITE + " INTEGER DEFAULT 1, " +
-//                MovieContract.MovieFavorites.FAVORITES_POSTER + " BLOB, " +
-//                "UNIQUE (" + MovieContract.MovieFavorites.FAVORITES_TITLE + ") ON CONFLICT REPLACE);";
+                "UNIQUE (" + MovieEntry.MOVIE_TMDB_ID + ") ON CONFLICT IGNORE);";
 
         db.execSQL(CREATE_MOVIE_TABLE);
-//        db.execSQL(CREATE_FAVORITE_TABLE);
 
     }
 
