@@ -187,14 +187,13 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             case R.id.action_settings:
                 startActivity(new Intent(this, SettingsActivity.class));
                 return true;
-            case R.id.check_fav_db:
-                checkFavDB();
+
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
-    private void checkFavDB() {
+    void checkFavDB() {
         String selection = MovieContract.MovieEntry.MOVIE_FAVORITE + "=?";
         String[] selectionArgs = {"1"};
         Cursor c = this.getContentResolver().query(MovieContract.MovieEntry.MOVIE_TABLE_URI, null, selection, selectionArgs, null);

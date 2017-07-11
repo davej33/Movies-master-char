@@ -1,5 +1,6 @@
 package com.example.android.movieapp2;
 
+import android.app.ActionBar;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -20,6 +21,7 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.example.android.movieapp2.data.MovieContract;
@@ -89,6 +91,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if (getArguments() != null) {
             mLocalID = getArguments().getString(ARG_LOCAL_ID);
             mTitle = getArguments().getString(ARG_MOVIE_TITLE);
