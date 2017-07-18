@@ -25,30 +25,58 @@ import java.util.Scanner;
 public final class NetworkUtils {
 
     private static final String LOG_TAG = NetworkUtils.class.getSimpleName();
+    private static final String SORT_QUERY = "sort";
+    private static String sMovieID;
 
-    public static ContentValues[] fetchData(Context context) throws JSONException {
 
-        SharedPreferences pref = android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(context);
-        String sort = pref.getString(context.getString(R.string.pref_sort_key), context.getString(R.string.pref_sort_default));
-        Log.i(LOG_TAG, "Sort: " + sort);
-        
-        // build URI using sharedPreferences
-        Uri uri = Uri.parse(context.getString(R.string.network_query_base_url)).buildUpon()
-                .appendQueryParameter(context.getString(R.string.pref_sort_key), sort)
-                .appendQueryParameter(context.getString(R.string.api_code_key), BuildConfig.MOVIE_API_KEY)
-                .build();
+    public static ContentValues[] fetchData(Context context, String type) throws JSONException {
+
+        Uri uri = null;
+        if (type.equals(SORT_QUERY)) {
+            SharedPreferences pref = android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(context);
+            String sort = pref.getString(context.getString(R.string.pref_sort_key), context.getString(R.string.pref_sort_default));
+//            Log.i(LOG_TAG, "Sort: " + sort);
+
+            // build URI using sharedPreferences
+            uri = Uri.parse(context.getString(R.string.query_base_url)).buildUpon()
+                    .appendQueryParameter(context.getString(R.string.pref_sort_key), sort)
+                    .appendQueryParameter(context.getString(R.string.api_code_key), BuildConfig.MOVIE_API_KEY)
+                    .build();
+        } else {
+            sMovieID = type;
+
+            uri = Uri.parse(context.getString(R.string.trailer_base_url)+type+"/videos?").buildUpon()
+                    .appendQueryParameter(context.getString(R.string.api_code_key), BuildConfig.MOVIE_API_KEY)
+                    .build();
+        }
 
         Log.i(LOG_TAG, "URL: " + uri);
 
         // connect to movie db
-        URL url = null;
-        try {
-            url = new URL(uri.toString());
-        } catch (MalformedURLException e) {
-            Log.e(LOG_TAG, "Malformed URL: " + e);
-        }
+        URL url = buildURL(uri);
 
         // capture and buffer network response
+        String bufferedString = getBufferedString(url);
+
+        // parse response as json
+        return getContentValues(bufferedString, type);
+
+        // https://www.youtube.com/watch?v=
+    }
+
+
+    private static ContentValues[] getContentValues(String bufferedString, String type) {
+        ContentValues[] cv = null;
+        try {
+            cv = JsonUtils.parseJson(bufferedString, type);
+        } catch (JSONException e) {
+            Log.e(LOG_TAG, "JSON parse error: " + e);
+        }
+
+        return cv;
+    }
+
+    private static String getBufferedString(URL url) {
         String bufferedString = null;
         if (url != null) {
             try {
@@ -63,16 +91,21 @@ public final class NetworkUtils {
                 e.printStackTrace();
             }
         }
-
-        // parse response as json
-        ContentValues[] cv = null;
-        try {
-            cv = JsonUtils.parseJson(bufferedString);
-        } catch (JSONException e) {
-            Log.e(LOG_TAG, "JSON parse error: " + e);
-        }
-
-        return cv;
-
+        return bufferedString;
     }
+
+    private static URL buildURL(Uri uri) {
+        URL url = null;
+        try {
+            url = new URL(uri.toString());
+        } catch (MalformedURLException e) {
+            Log.e(LOG_TAG, "Malformed URL: " + e);
+        }
+        return url;
+    }
+
+    public static String getMovieID() {
+        return sMovieID;
+    }
+
 }

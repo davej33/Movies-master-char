@@ -127,38 +127,6 @@ public final class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieV
         });
     }
 
-//    private ContentValues adapterGetContentValues(String title, int position) {
-//        mCursor.moveToPosition(position);
-//
-//        // release date
-//        int releaseDateCol = mCursor.getColumnIndex(MovieContract.MovieEntry.MOVIE_RELEASE_DATE);
-//        int releaseDate = mCursor.getInt(releaseDateCol);
-//        String releaseDateString = String.valueOf(releaseDate);
-//
-//        // plot
-//        int plotCol = mCursor.getColumnIndex(MovieContract.MovieEntry.MOVIE_PLOT);
-//        String plot = mCursor.getString(plotCol);
-//
-//        // poster
-//        int posterColId = mCursor.getColumnIndex(MovieContract.MovieEntry.MOVIE_POSTER);
-//        String poster = mCursor.getString(posterColId);
-//
-//        // rating bar
-//        int rateCol = mCursor.getColumnIndex(MovieContract.MovieEntry.MOVIE_RATING);
-//        float rating = (float) (mCursor.getDouble(rateCol) / 2);
-//
-//
-//        ContentValues cv = new ContentValues();
-//        cv.put(MovieContract.MovieFavorites.FAVORITES_TITLE, title);
-//        cv.put(MovieContract.MovieFavorites.FAVORITES_PLOT, plot);
-//        cv.put(MovieContract.MovieFavorites.FAVORITES_RELEASE_DATE, releaseDateString);
-//        cv.put(MovieContract.MovieFavorites.FAVORITES_POSTER, poster);
-//        cv.put(MovieContract.MovieFavorites.FAVORITES_RATING, rating);
-//
-//        return cv;
-//
-//    }
-
 
     @Override
     public int getItemCount() {
@@ -173,10 +141,15 @@ public final class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieV
         mCursor = cursor;
         notifyDataSetChanged();
     }
-
     public String getSelectedMovieLocalID(int cursorIndexNum) {
         mCursor.moveToPosition(cursorIndexNum);
         int idCol = mCursor.getColumnIndex(MovieContract.MovieEntry._ID);
+        return mCursor.getString(idCol);
+    }
+
+    public String getSelectedMovieSourceID(int cursorIndexNum) {
+        mCursor.moveToPosition(cursorIndexNum);
+        int idCol = mCursor.getColumnIndex(MovieContract.MovieEntry.MOVIE_TMDB_ID);
         return mCursor.getString(idCol);
     }
 

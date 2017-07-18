@@ -14,6 +14,8 @@ import com.example.android.movieapp2.data.MovieContract;
 public final class SyncUtils {
 
     public static boolean sIsInitialed;
+    private static final String SORT_QUERY = "sort";
+    private static final String FETCH_TYPE = "fetch";
 
     public static void initialize(final Context context){
 
@@ -41,6 +43,7 @@ public final class SyncUtils {
     public static void syncImmediately(Context context) {
         Log.w("SyncUtils", "syncImm run");
         Intent intent = new Intent(context, MovieIntentService.class);
+        intent.putExtra(FETCH_TYPE, SORT_QUERY);
         context.startService(intent);
     }
 

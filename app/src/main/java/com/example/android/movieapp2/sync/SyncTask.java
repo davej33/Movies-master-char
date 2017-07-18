@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
+import android.net.Uri;
 import android.util.Log;
 
 import com.example.android.movieapp2.data.MovieContract;
@@ -17,48 +18,44 @@ import org.json.JSONException;
 
 public final class SyncTask {
 
+    private static final String SORT_QUERY = "sort";
+    private static String mTrailerUpdateID;
 
 
-    static void syncData(Context context) {
+    static void syncData(Context context, String fetchType) {
+        Log.i("SyncTask", "fetchType: " + fetchType);
 
         // get network data
         ContentValues[] cv = null;
         try {
-            cv = NetworkUtils.fetchData(context);
+            cv = NetworkUtils.fetchData(context, fetchType);
             int test = 0;
-            Log.i("SyncTask","Network Utils Run Count: " + ++test);
+            Log.i("SyncTask", "Network Utils Run Count: " + ++test);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        Log.i("SyncTask", "cv size " + cv.length );
+        Log.i("SyncTask", "cv size " + cv.length);
         try {
-            if (cv.length > 0) {
-//                int rowsDeleted = context.getContentResolver().delete(MovieContract.MovieEntry.MOVIE_TABLE_URI, null, null);
+            if (fetchType.equals(SORT_QUERY) && cv.length > 0) {
+                Log.i("SyncTask", "cv size2 " + cv.length);
                 int rowsInserted = context.getContentResolver().bulkInsert(MovieContract.MovieEntry.MOVIE_TABLE_URI, cv);
                 Log.i("SyncTask", "inserted: " + rowsInserted);
+            } else {
+                Log.i("SyncTask", "cv size3 " + cv.length);
+                Uri updateUri = Uri.parse(MovieContract.MovieEntry.MOVIE_TABLE_URI + "/" + mTrailerUpdateID);
+                ContentValues cvcv = cv[0];
+                int updateRow = context.getContentResolver().update(updateUri,
+                        cvcv, null,null);
+                Log.i("SyncTask", "inserted: " + updateRow);
             }
-        }catch (SQLException e) {
-            Log.i("SyncTask", "SQL error: " + e );
+        } catch (SQLException e) {
+            Log.i("SyncTask", "SQL error: " + e);
         }
 
-//        try {
-//            Cursor cursor = context.getContentResolver().query(MovieContract.MovieEntry.MOVIE_TABLE_URI,
-//                    null, null, null, null);
-//            cursor.moveToFirst();
-//            Log.w("SyncTask", "Cursor count: " + cursor.getCount());
-//            int col = cursor.getColumnIndex(MovieContract.MovieEntry.MOVIE_TITLE);
-//            String s;
-//            try{
-//            s = cursor.getString(col);
-//                Log.w("SyncTask", "DB movie #1 = " + s);}
-//            catch (Exception e){
-//                Log.e("SyncTask", "Error: " + e);
-//            }
-//
-//            cursor.close();
-//        }catch(SQLException e){
-//            Log.i("SyncTask", "SQL error 2: " + e);
-//        }
 
+    }
+
+    public static void setmTrailerUpdateID(String id){
+        mTrailerUpdateID = id;
     }
 }

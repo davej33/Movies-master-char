@@ -64,6 +64,18 @@ public class SettingsActivity extends AppCompatActivity {
         }
 
         @Override
+        public void onStart() {
+            super.onStart();
+            getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
+        }
+
+        @Override
+        public void onStop() {
+            super.onStop();
+            getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
+        }
+
+        @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             addPreferencesFromResource(R.xml.pref_general);
 
@@ -85,6 +97,7 @@ public class SettingsActivity extends AppCompatActivity {
             Preference preference = findPreference(key);
             if (null != preference) {
                 if (!(preference instanceof CheckBoxPreference)) {
+                    Log.i("SP-Change", "key / value " + key + " / " + sharedPreferences.getString(key, ""));
                     setPreferenceSummary(preference, sharedPreferences.getString(key, ""));
                 }
             }

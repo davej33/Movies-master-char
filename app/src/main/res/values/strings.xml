@@ -2,7 +2,8 @@
     <string name="app_name">Movie Boom</string>
     <string name="title_activity_preference">Preferences</string>
     <string name="api_code_key">api_key</string>
-    <string name="network_query_base_url">https://api.themoviedb.org/3/discover/movie?</string>
+    <string name="query_base_url">https://api.themoviedb.org/3/discover/movie?</string>
+    <string name="trailer_base_url">https://api.themoviedb.org/3/movie/</string>
 
     <!-- Strings related to Settings -->
 
@@ -34,5 +35,6 @@
     <!-- Detail Activity Extras -->
     <string name="local_id_key">local_id</string>
     <string name="movie_title_key">title</string>
+    <string name="refresh">Refresh</string>
 
 </resources>

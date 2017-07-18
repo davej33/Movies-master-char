@@ -21,6 +21,8 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.example.android.movieapp2.data.MovieContract;
+import com.example.android.movieapp2.sync.MovieIntentService;
+import com.example.android.movieapp2.sync.SyncTask;
 import com.example.android.movieapp2.sync.SyncUtils;
 
 
@@ -32,6 +34,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private static final String RATING_VALUE = "vote_average.desc";
     private static final String FAVORITES_VALUE = "favorites";
     private static final String FAVORITED_DB_VALUE = "1";
+    private static final String FETCH_TYPE = "fetch";
 
     private MovieAdapter mAdapter;
     private static final int LANDSCAPE_COLUMNS = 3;
@@ -187,7 +190,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             case R.id.action_settings:
                 startActivity(new Intent(this, SettingsActivity.class));
                 return true;
-
+            case R.id.check_fav_db:
+                checkFavDB();
+                return true;
+            case R.id.action_refresh:
+                displayData();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -214,7 +222,13 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 String d = c.getString(col4);
                 int col5 = c.getColumnIndex(MovieContract.MovieEntry.MOVIE_FAVORITE);
                 String f = c.getString(col5);
-                Log.i(LOG_TAG, "Favorite ID/Title/poster/rating/date/FAV: " + id + " / " + title + " / " + p + " / " + r + " / " + d + " / " + f);
+                int col6 = c.getColumnIndex(MovieContract.MovieEntry.MOVIE_TRAILER_1);
+                String t1 = c.getString(col6);
+                int col7 = c.getColumnIndex(MovieContract.MovieEntry.MOVIE_TRAILER_2);
+                String t2 = c.getString(col7);
+                int col8 = c.getColumnIndex(MovieContract.MovieEntry.MOVIE_TRAILER_3);
+                String t3 = c.getString(col8);
+                Log.i(LOG_TAG, "Favorite ID/Title/poster/rating/date/FAV/1/2/3: " + id + " / " + title + " / " + p + " / " + r + " / " + d + " / " + f+ " / " + t1+ " / " + t2+ " / " + t3);
             } while (c.moveToNext());
             c.close();
         } else {
@@ -325,11 +339,18 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public void onListItemClick(int clickedItemIndex) {
-        Intent intent = new Intent(this, DetailsActivity.class);
         String localID = mAdapter.getSelectedMovieLocalID(clickedItemIndex);
-        String sourceID = mAdapter.getSelectedMovieTitle(clickedItemIndex);
+        String sourceID = mAdapter.getSelectedMovieSourceID(clickedItemIndex);
+        String title = mAdapter.getSelectedMovieTitle(clickedItemIndex);
+
+        Intent serviceIntent = new Intent(this, MovieIntentService.class);
+        serviceIntent.putExtra(FETCH_TYPE, sourceID);
+        startService(serviceIntent);
+        SyncTask.setmTrailerUpdateID(localID);
+
+        Intent intent = new Intent(this, DetailsActivity.class);
         intent.putExtra(getString(R.string.local_id_key), localID);
-        intent.putExtra(getString(R.string.movie_title_key), sourceID);
+        intent.putExtra(getString(R.string.movie_title_key), title);
         startActivity(intent);
     }
 

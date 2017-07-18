@@ -33,7 +33,10 @@ public final class MovieDbHelper extends SQLiteOpenHelper {
                 MovieEntry.MOVIE_RATING + " FLOAT NOT NULL, " +
                 MovieEntry.MOVIE_PREFERENCE_TYPE + " INTEGER, " +
                 MovieEntry.MOVIE_FAVORITE + " INTEGER DEFAULT 0, " +
-                MovieEntry.MOVIE_POSTER + " BLOB, " +
+                MovieEntry.MOVIE_POSTER + " TEXT, " +
+                MovieEntry.MOVIE_TRAILER_1 + " TEXT, " +
+                MovieEntry.MOVIE_TRAILER_2 + " TEXT, " +
+                MovieEntry.MOVIE_TRAILER_3 + " TEXT, " +
                 "UNIQUE (" + MovieEntry.MOVIE_TMDB_ID + ") ON CONFLICT IGNORE);";
 
         db.execSQL(CREATE_MOVIE_TABLE);

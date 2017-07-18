@@ -9,6 +9,8 @@ import android.support.annotation.Nullable;
  */
 
 public final class MovieIntentService extends IntentService {
+    private static final String FETCH_TYPE = "fetch";
+
     /**
      * Creates an IntentService.  Invoked by your subclass's constructor
      */
@@ -18,7 +20,8 @@ public final class MovieIntentService extends IntentService {
     }
 
     @Override
-    protected void onHandleIntent(@Nullable Intent intent) {
-        SyncTask.syncData(getApplicationContext());
+    protected void onHandleIntent(Intent intent) {
+        String fetchType = intent.getStringExtra(FETCH_TYPE);
+        SyncTask.syncData(getApplicationContext(), fetchType);
     }
 }

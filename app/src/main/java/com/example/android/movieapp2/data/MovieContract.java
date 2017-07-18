@@ -34,24 +34,10 @@ public final class MovieContract {
         public static final String MOVIE_PREFERENCE_TYPE = "type";
         public static final String MOVIE_FAVORITE = "favorite";
         public static final String MOVIE_POPULARITY = "popularity";
+        public static final String MOVIE_TRAILER_1 = "trailer1";
+        public static final String MOVIE_TRAILER_2 = "trailer2";
+        public static final String MOVIE_TRAILER_3 = "trailer3";
+
     }
 
-//    public static final class MovieFavorites implements BaseColumns{
-//
-//        // favorite table uri
-//        public static final Uri FAVORITE_TABLE_URI = BASE_CONTENT_URI.buildUpon()
-//                .appendPath(FAVORITES_PATH)
-//                .build();
-//
-//        // table columns
-//        public static final String FAVORITES_TABLE = "favorites";
-//        public static final String FAVORITES_ID = BaseColumns._ID;
-//        public static final String FAVORITES_TMDB_ID = "tmdbid";
-//        public static final String FAVORITES_TITLE = "title";
-//        public static final String FAVORITES_RELEASE_DATE = "date";
-//        public static final String FAVORITES_PLOT = "plot";
-//        public static final String FAVORITES_POSTER = "poster";
-//        public static final String FAVORITES_FAVORITE = "favorite";
-//        public static final String FAVORITES_RATING = "rating";
-//    }
 }

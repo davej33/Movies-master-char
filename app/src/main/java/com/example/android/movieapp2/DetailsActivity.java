@@ -16,6 +16,9 @@ import com.example.android.movieapp2.data.MovieContract;
 
 public class DetailsActivity extends AppCompatActivity implements DetailFragment.OnFragmentInteractionListener{
 
+    private static final String SORT_QUERY = "sort";
+    private static final String FETCH_TRAILERS = "trailers";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

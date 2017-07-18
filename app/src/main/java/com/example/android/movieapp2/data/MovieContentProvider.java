@@ -185,9 +185,9 @@ public final class MovieContentProvider extends ContentProvider {
             switch (sUriMatcher.match(uri)) {
                 case MOVIE_ITEM_CODE:
                     String id = uri.getPathSegments().get(1);
-                    Log.i(LOG_TAG, "ID: " + id);
+                    Log.i(LOG_TAG, "ID ------------ : " + id);
                     rowUpdated = db.update(MovieContract.MovieEntry.MOVIE_TABLE, values, "_id=?", new String[]{id});
-                    Log.i(LOG_TAG, "Rows updated: " + rowUpdated);
+                    Log.i(LOG_TAG, "Rows updated --------- : " + rowUpdated);
                     break;
                 default:
                     throw new IllegalArgumentException("Unknown Uri: " + uri);
