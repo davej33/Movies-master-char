@@ -47,10 +47,8 @@ public final class JsonUtils {
         // iterate through each movie to get data
         for (int i = 0; i < data.length(); i++) {
             JSONObject element = data.getJSONObject(i);
-            ContentValues cv = new ContentValues();
 
             if (type.equals(SORT_QUERY)) {
-//                contentValues = new ContentValues[data.length()];
                 String title = element.getString(TITLE_KEY);
                 String release_date = element.getString(RELEASE_DATE_KEY);
                 String plot = element.getString(PLOT_KEY);
@@ -60,7 +58,7 @@ public final class JsonUtils {
                 int id = element.getInt(ID_KEY);
 
                 // add key/values into ContentValues object
-                cv = new ContentValues();
+                ContentValues cv = new ContentValues();
                 cv.put(MovieEntry.MOVIE_TITLE, title);
                 cv.put(MovieEntry.MOVIE_RELEASE_DATE, release_date);
                 cv.put(MovieEntry.MOVIE_PLOT, plot);
@@ -68,38 +66,32 @@ public final class JsonUtils {
                 cv.put(MovieEntry.MOVIE_RATING, rating);
                 cv.put(MovieEntry.MOVIE_POSTER, poster);
                 cv.put(MovieEntry.MOVIE_TMDB_ID, id);
-                contentValues[i] = cv;
+                contentValues[i] = cv; // add ContentValues to ContentValues[]
             } else {
-                Log.i("JSON", " %%%%%%% Check Run");
-
-                String videoType = element.getString(TYPE_KEY);
-                if (videoType.equals(TRAILER_VALUE)) {
-                    String videoID = element.getString(VIDEO_ID);
-                    addIdToArrayList(videoID);
+                String videoType = element.getString(TYPE_KEY); // get the String value at key "type"
+                if (videoType.equals(TRAILER_VALUE)) { // if value match "Trailer"
+                    String videoID = element.getString(VIDEO_ID); // get the youtube trailer id
+                    addIdToArrayList(videoID); // add id to array list using helper
                 }
             }
-
-            // add ContentValues object to ContentValues[]
-
         }
+
+        // return ContentValues[] if array list is empty
         if (sTrailerList.size() == 0) {
-            Log.i("JSON", " %%%%%%% return A");
             return contentValues;
         } else {
-            Log.i("JSON", " %%%%%%% return B");
-            return convertArrayListToContentValue();
+            return convertArrayListToContentValue(); // convert array list to a ContentValue[] and return
         }
     }
 
     private static ContentValues[] convertArrayListToContentValue() {
-        Log.i("JSON", " %%%%%%% Array List Length: " + sTrailerList.size());
+
         ContentValues cv = new ContentValues();
         for (int i = 0; i < sTrailerList.size(); i++) {
-            String s = sTrailerList.get(i);
-            Log.i("JSON", " %%%%%%% sssssssss = " + s);
-            switch (i){
+            String s = sTrailerList.get(i); // get String at each iteration
+            switch (i) {
                 case 0:
-                    cv.put(MovieEntry.MOVIE_TRAILER_1, s);
+                    cv.put(MovieEntry.MOVIE_TRAILER_1, s); // put value in ContentValue with matching local DB column name
                     break;
                 case 1:
                     cv.put(MovieEntry.MOVIE_TRAILER_2, s);
@@ -108,13 +100,12 @@ public final class JsonUtils {
                     cv.put(MovieEntry.MOVIE_TRAILER_3, s);
                     break;
                 default:
-                    Log.i("Tag", "dont do shit");
+                    Log.i("Tag", "Only store up to three trailers");
             }
-
-
         }
-        ContentValues[] cvArray = new ContentValues[1];
-        cvArray[0] = cv;
+
+        ContentValues[] cvArray = new ContentValues[1]; // instantiate ContentValue[] with single ContentValue
+        cvArray[0] = cv; // add ContentValue to ContentValue[]
         return cvArray;
     }
 

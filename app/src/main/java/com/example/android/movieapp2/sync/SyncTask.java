@@ -34,18 +34,15 @@ public final class SyncTask {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        Log.i("SyncTask", "cv size " + cv.length);
+
         try {
             if (fetchType.equals(SORT_QUERY) && cv.length > 0) {
-                Log.i("SyncTask", "cv size2 " + cv.length);
                 int rowsInserted = context.getContentResolver().bulkInsert(MovieContract.MovieEntry.MOVIE_TABLE_URI, cv);
                 Log.i("SyncTask", "inserted: " + rowsInserted);
             } else {
-                Log.i("SyncTask", "cv size3 " + cv.length);
                 Uri updateUri = Uri.parse(MovieContract.MovieEntry.MOVIE_TABLE_URI + "/" + mTrailerUpdateID);
-                ContentValues cvcv = cv[0];
                 int updateRow = context.getContentResolver().update(updateUri,
-                        cvcv, null,null);
+                        cv[0], null,null);
                 Log.i("SyncTask", "inserted: " + updateRow);
             }
         } catch (SQLException e) {

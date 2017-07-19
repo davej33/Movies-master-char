@@ -26,16 +26,16 @@ public final class NetworkUtils {
 
     private static final String LOG_TAG = NetworkUtils.class.getSimpleName();
     private static final String SORT_QUERY = "sort";
-    private static String sMovieID;
+
 
 
     public static ContentValues[] fetchData(Context context, String type) throws JSONException {
 
         Uri uri = null;
+
         if (type.equals(SORT_QUERY)) {
             SharedPreferences pref = android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(context);
             String sort = pref.getString(context.getString(R.string.pref_sort_key), context.getString(R.string.pref_sort_default));
-//            Log.i(LOG_TAG, "Sort: " + sort);
 
             // build URI using sharedPreferences
             uri = Uri.parse(context.getString(R.string.query_base_url)).buildUpon()
@@ -43,9 +43,7 @@ public final class NetworkUtils {
                     .appendQueryParameter(context.getString(R.string.api_code_key), BuildConfig.MOVIE_API_KEY)
                     .build();
         } else {
-            sMovieID = type;
-
-            uri = Uri.parse(context.getString(R.string.trailer_base_url)+type+"/videos?").buildUpon()
+            uri = Uri.parse(context.getString(R.string.trailer_base_url) + type + "/videos?").buildUpon()
                     .appendQueryParameter(context.getString(R.string.api_code_key), BuildConfig.MOVIE_API_KEY)
                     .build();
         }
@@ -103,9 +101,4 @@ public final class NetworkUtils {
         }
         return url;
     }
-
-    public static String getMovieID() {
-        return sMovieID;
-    }
-
 }

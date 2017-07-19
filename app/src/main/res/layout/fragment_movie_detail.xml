@@ -3,31 +3,32 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#afafaf"
+    android:background="#000"
     tools:context="com.example.android.movieapp2.DetailFragment">
 
     <!-- TODO: Update blank fragment layout -->
 
     <ImageView
         android:id="@+id/poster_detail_view"
-        android:layout_width="180dp"
-        android:layout_height="wrap_content"
+        android:layout_width="187dp"
+        android:layout_height="277dp"
         android:layout_marginLeft="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:background="@color/colorPrimaryDark"
+        android:contentDescription="@string/poster_content_desc"
         android:scaleType="fitXY"
         android:src="@drawable/placeholder_detail_view"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/movie_title" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_goneMarginLeft="0dp" />
 
     <TextView
         android:id="@+id/movie_title"
         style="@style/Base.TextAppearance.AppCompat.Title"
-        android:layout_width="368dp"
+        android:layout_width="0dp"
         android:layout_height="26dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
+        android:background="#CC607a93"
         android:gravity="center_horizontal"
         android:textColor="#fff"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -39,14 +40,10 @@
         android:id="@+id/release_year"
         android:layout_width="43dp"
         android:layout_height="15dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="11dp"
-        app:layout_constraintLeft_toLeftOf="@+id/ratingBar"
-        app:layout_constraintRight_toRightOf="@+id/ratingBar"
-        app:layout_constraintTop_toBottomOf="@+id/ratingBar"
+        android:textColor="#fff"
+        app:layout_constraintLeft_toRightOf="@+id/poster_detail_view"
+        app:layout_constraintRight_toLeftOf="@+id/ratingBar"
+        app:layout_constraintTop_toTopOf="@+id/ratingBar"
         tools:text="(2017)" />
 
     <RatingBar
@@ -54,31 +51,27 @@
         style="@style/Widget.AppCompat.RatingBar.Small"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginStart="8dp"
 
+        android:layout_marginTop="8dp"
         android:isIndicator="true"
         android:numStars="5"
         android:rating="3.5"
-        app:layout_constraintLeft_toRightOf="@+id/poster_detail_view"
+        app:layout_constraintLeft_toRightOf="@+id/release_year"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/poster_detail_view" />
+        app:layout_constraintTop_toBottomOf="@+id/movie_title" />
 
 
     <ScrollView
         android:id="@+id/plot_scrollView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:scrollbars="vertical"
-        app:layout_constraintBottom_toTopOf="@+id/favorite_checkbox_view"
+        app:layout_constraintBottom_toBottomOf="@+id/poster_detail_view"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toRightOf="@+id/poster_detail_view"
         app:layout_constraintRight_toRightOf="parent"
@@ -89,29 +82,75 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="top"
-            tools:layout_editor_absoluteX="8dp"
-            tools:layout_editor_absoluteY="131dp"
-            tools:text="Picasso and Glide An extremely common problem that Android developers face is the proper use of images in their application. Including many high quality images will drastically increase your apk size, while downloading images over the network comes with memory consumption and network availability problems. Picasso and Glide are both very robust libraries that facilitate the loading, caching and displaying of Images. They include tons of amazing features, such as the ability to include placeholder images and local caching, so almost every application that includes images uses one of these. Check out the documentation on Picasso and Glide." />
-
+            android:layout_marginTop="0dp"
+            android:textColor="#fff"
+            tools:text="Picasso and Glide An extremely common problem that Android developers
+            face is the proper use of images in their application. Including many high quality
+            images will drastically increase your apk size, while downloading images over the network
+            comes with mem" />
 
     </ScrollView>
 
     <ToggleButton
         android:id="@+id/favorite_checkbox_view"
         android:layout_width="48dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginStart="8dp"
+        android:layout_height="48dp"
+        android:layout_marginBottom="0dp"
+        android:layout_marginRight="0dp"
         android:background="@drawable/favorite_checkbox"
         android:stateListAnimator="@null"
         android:textOff=""
         android:textOn=""
         app:layout_constraintBottom_toBottomOf="@+id/poster_detail_view"
-        app:layout_constraintLeft_toRightOf="@+id/poster_detail_view"
-        app:layout_constraintRight_toRightOf="parent" />
+        app:layout_constraintRight_toRightOf="@+id/poster_detail_view" />
 
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="0dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginTop="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="@+id/poster_detail_view"
+        app:layout_constraintRight_toRightOf="@+id/poster_detail_view"
+        app:layout_constraintTop_toBottomOf="@+id/poster_detail_view"
+        app:layout_constraintVertical_bias="0.714">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="0dp"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="0dp"
+            android:layout_marginTop="0dp"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="@+id/poster_detail_view"
+            app:layout_constraintRight_toRightOf="@+id/poster_detail_view"
+            app:layout_constraintTop_toBottomOf="@+id/poster_detail_view">
+
+            <ImageView
+                android:id="@+id/trailer1_image"
+                android:contentDescription="@string/trailer_thumb_content_desc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:src="@drawable/trailer_thumbnail_default" />
+
+            <ImageView
+                android:id="@+id/trailer2_image"
+                android:contentDescription="@string/trailer_thumb_content_desc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:src="@drawable/trailer_thumbnail_default" />
+
+            <ImageView
+                android:id="@+id/trailer3_image"
+                android:contentDescription="@string/trailer_thumb_content_desc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:src="@drawable/trailer_thumbnail_default" />
+        </LinearLayout>
+    </ScrollView>
 
 </android.support.constraint.ConstraintLayout>

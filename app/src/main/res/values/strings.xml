@@ -37,4 +37,9 @@
     <string name="movie_title_key">title</string>
     <string name="refresh">Refresh</string>
 
+    <!-- UI Strings -->
+    <string name="poster_content_desc">Movie Poster</string>
+    <string name="trailer_thumb_content_desc">Trailer Image</string>
+
+
 </resources>
