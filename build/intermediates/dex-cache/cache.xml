@@ -30,6 +30,15 @@
     </item>
     <item
         is-multidex="false"
+        jar="/Users/charlotte/.gradle/caches/modules-2/files-2.1/com.dubsmash.volley/library/2.0.1/8b2572dd32db404209ac150a0a0ef38bc45316cc/library-2.0.1.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="8b2572dd32db404209ac150a0a0ef38bc45316cc">
+        <dex dex="/Users/charlotte/Downloads/Movies-master/app/build/intermediates/pre-dexed/debug/library-2.0.1_d20b29e226bb9f78c4b526c454c30430ecda52af.jar" />
+    </item>
+    <item
+        is-multidex="false"
         jar="/Users/charlotte/.gradle/caches/modules-2/files-2.1/com.jakewharton/butterknife-annotations/8.6.0/48efa6f14074e1a6b16e02ac05eba3fc5c7c7ec8/butterknife-annotations-8.6.0.jar"
         jumboMode="false"
         optimize="true"

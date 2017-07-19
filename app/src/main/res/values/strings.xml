@@ -40,6 +40,8 @@
     <!-- UI Strings -->
     <string name="poster_content_desc">Movie Poster</string>
     <string name="trailer_thumb_content_desc">Trailer Image</string>
-
+    <string name="trailer_img_url_a">https://img.youtube.com/vi/</string>
+    <string name="trailer_img_url_b">/0.jpg</string>
+    <string name="trailer_url">https://www.youtube.com/watch?v=</string>
 
 </resources>

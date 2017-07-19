@@ -1,9 +1,11 @@
 package com.example.android.movieapp2;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -20,10 +22,17 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.example.android.movieapp2.data.MovieContract;
-import com.example.android.movieapp2.sync.MovieIntentService;
-import com.example.android.movieapp2.sync.SyncTask;
-import com.example.android.movieapp2.sync.SyncUtils;
+import com.example.android.movieapp2.utils.SyncUtils;
+import com.example.android.movieapp2.utils.JsonUtils;
+import com.example.android.movieapp2.utils.NetworkUtils;
+
+import org.json.JSONException;
+
+import java.util.ArrayList;
 
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>,
@@ -34,7 +43,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private static final String RATING_VALUE = "vote_average.desc";
     private static final String FAVORITES_VALUE = "favorites";
     private static final String FAVORITED_DB_VALUE = "1";
-    private static final String FETCH_TYPE = "fetch";
+    private static final String FETCH_TRAILERS_VALUE = "trailers";
 
     private MovieAdapter mAdapter;
     private static final int LANDSCAPE_COLUMNS = 3;
@@ -67,7 +76,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         if (SyncUtils.isInitialized()) {
             displayData();
         } else {
-            SyncUtils.initialize(this);
+            NetworkUtils.initRequestQueue(this);
+            fetchMovies();
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -117,48 +127,15 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     protected void onStart() {
 
-        // check if SP-ChangeListener is null
-        if (SharedPreferences.OnSharedPreferenceChangeListener.class.getSimpleName() == null) {
-            Log.i(LOG_TAG, "Listener null");
-        } else {
-            Log.i(LOG_TAG, "MA - onStart(): Listener NOT null");
-        }
-
         // if sort pref has changed, take action on new sort value
         if (mSortPrefChanged) {
-            switch (mSortValue) {
-                case POPULAR_VALUE:
-                    SyncUtils.syncImmediately(this);
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            displayData();
-                        }
-                    }, 1000);
-                    mSortPrefChanged = false;
-                    mSortValue = getString(R.string.pref_sort_popularity_value);
-                    break;
-                case RATING_VALUE:
-                    SyncUtils.syncImmediately(this);
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            displayData();
-                        }
-                    }, 1000);
-                    mSortPrefChanged = false;
-                    mSortValue = getString(R.string.pref_sort_rating_value); // TODO: better manage SP change, fix listener.
-                    break;
-                case FAVORITES_VALUE:
-                    if (getSupportLoaderManager().getLoader(LOADER_ID) != null) {
-                        getSupportLoaderManager().destroyLoader(LOADER_ID);
-                        getSupportLoaderManager().initLoader(LOADER_ID, null, this);
-                    } else {
-                        getSupportLoaderManager().restartLoader(LOADER_ID, null, this);
-                    }
-                    mSortPrefChanged = false;
-                    mSortValue = getString(R.string.pref_sort_fav_value);
-            }
+            fetchMovies();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    displayData();
+                }
+            }, 1000);
         }
 
         // refresh display data if SP-Favorites changed
@@ -167,6 +144,50 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             mFavoriteChanged = false;
         }
         super.onStart();
+    }
+
+    private void fetchMovies() {
+        switch (mSortValue) {
+            case POPULAR_VALUE:
+            case RATING_VALUE:
+                StringRequest dataRequest = new StringRequest(NetworkUtils.buildURL(this), new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.i(LOG_TAG, "### respsonse ###: " + response);
+
+                        // parse
+                        ContentValues[] cv = null;
+                        try {
+                            cv = JsonUtils.parseJson(getApplicationContext(), response, mSortValue);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        // insert into db
+                        int rowsInserted;
+                        if (cv != null) {
+                            try {
+                                rowsInserted = getContentResolver().bulkInsert(MovieContract.MovieEntry.MOVIE_TABLE_URI, cv);
+                                Log.i(LOG_TAG, "rows inserted: " + rowsInserted);
+                            } catch (SQLException e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            Log.i(LOG_TAG, "ContentValues[] is null");
+                        }
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        error.printStackTrace();
+                    }
+                });
+                NetworkUtils.addToRequestQueue(dataRequest, mSortValue);
+                break;
+            default:
+                Log.i(LOG_TAG, "fetchMovies() no match");
+
+        }
     }
 
     private void displayData() {
@@ -205,7 +226,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         String selection = MovieContract.MovieEntry.MOVIE_FAVORITE + "=?";
         String[] selectionArgs = {"1"};
         Cursor c = this.getContentResolver().query(MovieContract.MovieEntry.MOVIE_TABLE_URI, null, selection, selectionArgs, null);
-        if (c != null && c.getCount() > 0 ) {
+        if (c != null && c.getCount() > 0) {
             c.moveToFirst();
             Log.i(LOG_TAG, "Cursor count: " + c.getCount());
 
@@ -228,7 +249,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 String t2 = c.getString(col7);
                 int col8 = c.getColumnIndex(MovieContract.MovieEntry.MOVIE_TRAILER_3);
                 String t3 = c.getString(col8);
-                Log.i(LOG_TAG, "Favorite ID/Title/poster/rating/date/FAV/1/2/3: " + id + " / " + title + " / " + p + " / " + r + " / " + d + " / " + f+ " / " + t1+ " / " + t2+ " / " + t3);
+                Log.i(LOG_TAG, "Favorite ID/Title/poster/rating/date/FAV/1/2/3: " + id + " / " + title + " / " + p + " / " + r + " / " + d + " / " + f + " / " + t1 + " / " + t2 + " / " + t3);
             } while (c.moveToNext());
             c.close();
         } else {
@@ -343,15 +364,49 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         String sourceID = mAdapter.getSelectedMovieSourceID(clickedItemIndex);
         String title = mAdapter.getSelectedMovieTitle(clickedItemIndex);
 
-        Intent serviceIntent = new Intent(this, MovieIntentService.class);
-        serviceIntent.putExtra(FETCH_TYPE, sourceID);
-        startService(serviceIntent);
-        SyncTask.setmTrailerUpdateID(localID);
-
+        fetchMovieDetails(localID, sourceID);
         Intent intent = new Intent(this, DetailsActivity.class);
         intent.putExtra(getString(R.string.local_id_key), localID);
         intent.putExtra(getString(R.string.movie_title_key), title);
         startActivity(intent);
+    }
+
+    private void fetchMovieDetails(final String dbRowID, String sourceID) {
+
+
+        StringRequest detailRequest = new StringRequest(NetworkUtils.buildMovieDetailUrl(this, sourceID), new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                ContentValues[] cv = new ContentValues[1];
+                try {
+                    cv = JsonUtils.parseJson(getApplicationContext(), response, FETCH_TRAILERS_VALUE);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                Uri updateUri = Uri.parse(MovieContract.MovieEntry.MOVIE_TABLE_URI + "/" + dbRowID);
+                int rowUpdated;
+                if (cv != null && cv.length > 0) {
+                    try {
+                        rowUpdated = getContentResolver().update(updateUri, cv[0], null, null);
+                        Log.i(LOG_TAG, "Trailers update successful: " + rowUpdated);
+                    } catch (SQLException e) {
+                        Log.e(LOG_TAG, "SQL update error");
+                    }
+                } else {
+                    Log.e(LOG_TAG, "No CV for trailer");
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(LOG_TAG, "ErrorListner error" + error);
+            }
+        });
+
+        NetworkUtils.addToRequestQueue(detailRequest, FETCH_TRAILERS_VALUE);
+
+        //https://img.youtube.com/vi/DpSaTrW4leg/0.jpg
     }
 
 

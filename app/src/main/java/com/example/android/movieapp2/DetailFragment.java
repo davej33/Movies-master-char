@@ -29,7 +29,11 @@ import com.example.android.movieapp2.utils.FavoriteUtils;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.Set;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 
 /**
@@ -62,6 +66,23 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     private ImageView mPosterV;
     private ToggleButton mFavorite_button;
 
+    // Trailer vars
+    private static ArrayList<String> sTrailerList;
+    private static Context sContext;
+    private static String trailer1_video_url;
+    private static String trailer2_video_url;
+    private static String trailer3_video_url;
+    private static String trailer1_thumb_url;
+    private static String trailer2_thumb_url;
+    private static String trailer3_thumb_url;
+
+    @BindView(R.id.trailer1_image)
+    ImageView mTrailer1Image;
+    @BindView(R.id.trailer2_image)
+    ImageView mTrailer2Image;
+    @BindView(R.id.trailer3_image)
+    ImageView mTrailer3Image;
+
     // db favorite-state constants
     private static final int FAVORITED = 1;
     private static final int NOT_FAVORITED = 0;
@@ -71,6 +92,31 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     public DetailFragment() {
         // Required empty public constructor
     }
+
+    public static void setTrailerArrayList(Context context, ArrayList<String> trailerArrayList) {
+        sContext = context;
+        sTrailerList = trailerArrayList;
+        buildTrailerUrls();
+    }
+
+    private static void buildTrailerUrls() {
+        for (int i = 0; i < sTrailerList.size(); i++) {
+            switch (i) {
+                case 0:
+                    String s1 = sTrailerList.get(0);
+                    trailer1_thumb_url = sContext.getString(R.string.trailer_img_url_a) + s1 + sContext.getString(R.string.trailer_img_url_b);
+                    break;
+                case 1:
+                    String s2 = sTrailerList.get(1);
+                    trailer2_thumb_url = sContext.getString(R.string.trailer_img_url_a) + s2 + sContext.getString(R.string.trailer_img_url_b);
+                    break;
+                case 2:
+                    String s3 = sTrailerList.get(2);
+                    trailer1_thumb_url = sContext.getString(R.string.trailer_img_url_a) + s3 + sContext.getString(R.string.trailer_img_url_b);
+            }
+        }
+    }
+
 
     /**
      * Use this factory method to create a new instance of
@@ -117,6 +163,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_movie_detail, container, false); // inflate detail view
+        ButterKnife.bind(this, view);
 
         // get views
         mTitleV = (TextView) view.findViewById(R.id.movie_title);
@@ -133,7 +180,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         mFavorite_button.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, final boolean b) {
-                if(b){
+                if (b) {
                     ContentValues cv = new ContentValues();
                     cv.put(MovieContract.MovieEntry.MOVIE_FAVORITE, FAVORITED);
                     FavoriteUtils.addFavorite(getContext(), mTitle, mLocalID, cv);
@@ -143,16 +190,39 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
                         cv.put(MovieContract.MovieEntry.MOVIE_FAVORITE, NOT_FAVORITED);
                         FavoriteUtils.removeFavorite(getContext(), mTitle, mLocalID, cv);
                     } catch (Exception e) {
-                        Log.e(LOG_TAG,"error removing favorite: " + mTitle);
+                        Log.e(LOG_TAG, "error removing favorite: " + mTitle);
                     }
                 }
             }
         });
         // Inflate the layout for this fragment
+
+        Picasso.with(sContext)
+                .load(trailer1_thumb_url)
+                .error(R.drawable.error)
+                .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
+                .placeholder(R.drawable.placeholder)
+                .centerCrop()
+                .resize(400, 300)
+                .into(mTrailer1Image);
+        Picasso.with(sContext)
+                .load(trailer2_thumb_url)
+                .error(R.drawable.error)
+                .resize(400, 300)
+                .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
+                .placeholder(R.drawable.placeholder)
+                .centerCrop()
+                .into(mTrailer2Image);
+        Picasso.with(sContext)
+                .load(trailer3_thumb_url)
+                .error(R.drawable.error)
+                .resize(400, 300)
+                .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
+                .placeholder(R.drawable.placeholder)
+                .centerCrop()
+                .into(mTrailer3Image);
         return view;
     }
-
-
 
 
     // initialize or restart loader

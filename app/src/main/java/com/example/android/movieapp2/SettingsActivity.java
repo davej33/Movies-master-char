@@ -93,11 +93,9 @@ public class SettingsActivity extends AppCompatActivity {
 
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-            Log.i("Prefs", "onSharedPrefChanged Run");
             Preference preference = findPreference(key);
             if (null != preference) {
                 if (!(preference instanceof CheckBoxPreference)) {
-                    Log.i("SP-Change", "key / value " + key + " / " + sharedPreferences.getString(key, ""));
                     setPreferenceSummary(preference, sharedPreferences.getString(key, ""));
                 }
             }

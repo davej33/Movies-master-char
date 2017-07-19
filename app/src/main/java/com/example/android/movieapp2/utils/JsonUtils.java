@@ -1,8 +1,10 @@
 package com.example.android.movieapp2.utils;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.util.Log;
 
+import com.example.android.movieapp2.DetailFragment;
 import com.example.android.movieapp2.data.MovieContract.MovieEntry;
 
 import org.json.JSONArray;
@@ -16,10 +18,14 @@ import java.util.ArrayList;
  */
 
 public final class JsonUtils {
-    private static final String SORT_QUERY = "sort";
-    private static ArrayList<String> sTrailerList = new ArrayList<>();
 
-    public static ContentValues[] parseJson(String bufferedString, String type) throws JSONException {
+    private static final String POPULAR_VALUE = "popularity.desc";
+    private static final String RATING_VALUE = "vote_average.desc";
+    private static final String FETCH_TRAILERS_VALUE = "trailers";
+    private static ArrayList<String> sTrailerList = new ArrayList<>();
+    private static Context mContext;
+
+    public static ContentValues[] parseJson(Context context, String bufferedString, String type) throws JSONException {
 
         // Query Api keys
         final String TITLE_KEY = "title";
@@ -36,6 +42,8 @@ public final class JsonUtils {
         final String TRAILER_VALUE = "Trailer";
         final String TYPE_KEY = "type";
 
+        mContext = context;
+
         // create json object and array from buffered stream
         JSONObject root = new JSONObject(bufferedString);
         JSONArray data = root.getJSONArray("results");
@@ -47,41 +55,49 @@ public final class JsonUtils {
         // iterate through each movie to get data
         for (int i = 0; i < data.length(); i++) {
             JSONObject element = data.getJSONObject(i);
+            switch (type) {
+                case POPULAR_VALUE:
+                case RATING_VALUE:
 
-            if (type.equals(SORT_QUERY)) {
-                String title = element.getString(TITLE_KEY);
-                String release_date = element.getString(RELEASE_DATE_KEY);
-                String plot = element.getString(PLOT_KEY);
-                double popularity = element.getDouble(POPULARITY_KEY);
-                double rating = element.getDouble(RATING_KEY);
-                String poster = BASE_IMAGE_URL + element.getString(POSTER_KEY);
-                int id = element.getInt(ID_KEY);
+                    String title = element.getString(TITLE_KEY);
+                    String release_date = element.getString(RELEASE_DATE_KEY);
+                    String plot = element.getString(PLOT_KEY);
+                    double popularity = element.getDouble(POPULARITY_KEY);
+                    double rating = element.getDouble(RATING_KEY);
+                    String poster = BASE_IMAGE_URL + element.getString(POSTER_KEY);
+                    int id = element.getInt(ID_KEY);
 
-                // add key/values into ContentValues object
-                ContentValues cv = new ContentValues();
-                cv.put(MovieEntry.MOVIE_TITLE, title);
-                cv.put(MovieEntry.MOVIE_RELEASE_DATE, release_date);
-                cv.put(MovieEntry.MOVIE_PLOT, plot);
-                cv.put(MovieEntry.MOVIE_POPULARITY, popularity);
-                cv.put(MovieEntry.MOVIE_RATING, rating);
-                cv.put(MovieEntry.MOVIE_POSTER, poster);
-                cv.put(MovieEntry.MOVIE_TMDB_ID, id);
-                contentValues[i] = cv; // add ContentValues to ContentValues[]
-            } else {
-                String videoType = element.getString(TYPE_KEY); // get the String value at key "type"
-                if (videoType.equals(TRAILER_VALUE)) { // if value match "Trailer"
-                    String videoID = element.getString(VIDEO_ID); // get the youtube trailer id
-                    addIdToArrayList(videoID); // add id to array list using helper
-                }
+                    // add key/values into ContentValues object
+                    ContentValues cv = new ContentValues();
+                    cv.put(MovieEntry.MOVIE_TITLE, title);
+                    cv.put(MovieEntry.MOVIE_RELEASE_DATE, release_date);
+                    cv.put(MovieEntry.MOVIE_PLOT, plot);
+                    cv.put(MovieEntry.MOVIE_POPULARITY, popularity);
+                    cv.put(MovieEntry.MOVIE_RATING, rating);
+                    cv.put(MovieEntry.MOVIE_POSTER, poster);
+                    cv.put(MovieEntry.MOVIE_TMDB_ID, id);
+                    contentValues[i] = cv; // add ContentValues to ContentValues[]
+                    break;
+                case FETCH_TRAILERS_VALUE:
+                    String videoType = element.getString(TYPE_KEY); // get the String value at key "type"
+                    if (videoType.equals(TRAILER_VALUE)) { // if value match "Trailer"
+                        String videoID = element.getString(VIDEO_ID); // get the youtube trailer id
+                        addIdToArrayList(videoID); // add id to array list using helper
+                    }
             }
         }
 
         // return ContentValues[] if array list is empty
-        if (sTrailerList.size() == 0) {
+        if (sTrailerList.size() == 0)
+
+        {
             return contentValues;
-        } else {
+        } else
+
+        {
             return convertArrayListToContentValue(); // convert array list to a ContentValue[] and return
         }
+
     }
 
     private static ContentValues[] convertArrayListToContentValue() {
@@ -106,6 +122,7 @@ public final class JsonUtils {
 
         ContentValues[] cvArray = new ContentValues[1]; // instantiate ContentValue[] with single ContentValue
         cvArray[0] = cv; // add ContentValue to ContentValue[]
+        DetailFragment.setTrailerArrayList(mContext, sTrailerList);
         return cvArray;
     }
 
