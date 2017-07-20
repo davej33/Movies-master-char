@@ -3,6 +3,7 @@ package com.example.android.movieapp2;
 import android.app.ActionBar;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
@@ -75,7 +76,6 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
     // Trailer vars
     private static ArrayList<String> sTrailerList;
-
     private static String trailer1_video_url;
     private static String trailer2_video_url;
     private static String trailer3_video_url;
@@ -116,12 +116,12 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
                 case 1:
                     String movieIdAtIndex1 = sTrailerList.get(1);
                     trailer2_thumb_url = TRAILER_IMG_URL_A + movieIdAtIndex1 + TRAILER_IMG_URL_B;
-                    trailer1_video_url = TRAILER_VIDEO_URL + movieIdAtIndex1;
+                    trailer2_video_url = TRAILER_VIDEO_URL + movieIdAtIndex1;
                     break;
                 case 2:
                     String movieIdAtIndex2 = sTrailerList.get(2);
                     trailer3_thumb_url = TRAILER_IMG_URL_A + movieIdAtIndex2 + TRAILER_IMG_URL_B;
-                    trailer1_video_url = TRAILER_VIDEO_URL + movieIdAtIndex2;
+                    trailer3_video_url = TRAILER_VIDEO_URL + movieIdAtIndex2;
                     break;
             }
         }
@@ -175,9 +175,79 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         View view = inflater.inflate(R.layout.fragment_movie_detail, container, false); // inflate detail view
         ButterKnife.bind(this, view);
 
+
+        // clear image views
         mTrailer1Image.setImageResource(R.drawable.detail_imageview_clear);
-        mTrailer2Image.setImageResource(R.drawable.detail_imageview_clear);
-        mTrailer3Image.setImageResource(R.drawable.detail_imageview_clear);
+        mTrailer2Image.setVisibility(View.GONE);
+        mTrailer3Image.setVisibility(View.GONE);
+
+        // set images
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                // if no trailers, show no trailer image
+                if (sTrailerList.size() == 0) mTrailer1Image.setImageResource(R.drawable.no_video_img);
+
+                // for each trailer, set image else do not show image view
+                if (sTrailerList.size() >= 1) {
+                    Picasso.with(getContext())
+                            .load(trailer1_thumb_url)
+                            .error(R.drawable.error)
+                            .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
+                            .placeholder(R.drawable.placeholder)
+                            .centerCrop()
+                            .resize(400, 300)
+                            .into(mTrailer1Image);
+                }
+
+                if (sTrailerList.size() >= 2) {
+                    mTrailer2Image.setVisibility(View.VISIBLE);
+                    Picasso.with(getContext())
+                            .load(trailer2_thumb_url)
+                            .error(R.drawable.error)
+                            .resize(400, 300)
+                            .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
+                            .placeholder(R.drawable.placeholder)
+                            .centerCrop()
+                            .into(mTrailer2Image);
+                }
+                if (sTrailerList.size() >= 3) {
+                    mTrailer3Image.setVisibility(View.VISIBLE);
+                    Picasso.with(getContext())
+                            .load(trailer3_thumb_url)
+                            .error(R.drawable.error)
+                            .resize(400, 300)
+                            .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
+                            .placeholder(R.drawable.placeholder)
+                            .centerCrop()
+                            .into(mTrailer3Image);
+                }
+
+            }
+        }, 1000);
+
+        // set onClickListeners
+        mTrailer1Image.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(trailer1_video_url));
+                startActivity(intent);
+            }
+        });
+        mTrailer2Image.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(trailer2_video_url));
+                startActivity(intent);
+            }
+        });
+        mTrailer3Image.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(trailer3_video_url));
+                startActivity(intent);
+            }
+        });
 
         // get views
         mTitleV = (TextView) view.findViewById(R.id.movie_title);
@@ -209,40 +279,6 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
                 }
             }
         });
-        // Inflate the layout for this fragment
-
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                // add trailer images
-                Picasso.with(getContext())
-                        .load(trailer1_thumb_url)
-                        .error(R.drawable.error)
-                        .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
-                        .placeholder(R.drawable.placeholder)
-                        .centerCrop()
-                        .resize(400, 300)
-                        .into(mTrailer1Image);
-                Picasso.with(getContext())
-                        .load(trailer2_thumb_url)
-                        .error(R.drawable.error)
-                        .resize(400, 300)
-                        .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
-                        .placeholder(R.drawable.placeholder)
-                        .centerCrop()
-                        .into(mTrailer2Image);
-                Picasso.with(getContext())
-                        .load(trailer3_thumb_url)
-                        .error(R.drawable.error)
-                        .resize(400, 300)
-                        .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
-                        .placeholder(R.drawable.placeholder)
-                        .centerCrop()
-                        .into(mTrailer3Image);
-
-            }
-        },1000);
 
 
         return view;
@@ -376,4 +412,6 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
+
 }

@@ -42,22 +42,23 @@
         android:layout_height="15dp"
         android:textColor="@color/colorDetailText"
         tools:text="(2017)"
-        tools:layout_editor_absoluteY="34dp"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toRightOf="@+id/ratingBar" />
+        app:layout_constraintLeft_toRightOf="@+id/ratingBar"
+        app:layout_constraintTop_toTopOf="@+id/ratingBar"
+        android:layout_marginTop="0dp" />
 
     <RatingBar
         android:id="@+id/ratingBar"
         style="@style/Widget.AppCompat.RatingBar.Small"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
         android:isIndicator="true"
         android:numStars="5"
         android:rating="3.5"
-        tools:layout_editor_absoluteY="34dp"
         app:layout_constraintLeft_toRightOf="@+id/poster_detail_view"
-        app:layout_constraintRight_toLeftOf="@+id/release_year" />
+        app:layout_constraintRight_toLeftOf="@+id/release_year"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/movie_title" />
 
 
     <ScrollView
@@ -115,7 +116,7 @@
         android:layout_marginEnd="8dp">
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="0dp"
             android:layout_marginLeft="0dp"
@@ -128,24 +129,27 @@
 
             <ImageView
                 android:id="@+id/trailer1_image"
-                android:layout_width="150dp"
+                android:layout_width="136dp"
                 android:layout_height="100dp"
+                android:layout_gravity="center_horizontal"
                 android:contentDescription="@string/trailer_thumb_content_desc"
-                android:src="@drawable/trailer_thumbnail_default"
+                android:src="@drawable/no_video_img"
                 tools:layout_editor_absoluteX="8dp"
                 tools:layout_editor_absoluteY="-25dp" />
 
             <ImageView
                 android:id="@+id/trailer2_image"
-                android:layout_width="150dp"
+                android:layout_width="136dp"
                 android:layout_height="100dp"
                 android:contentDescription="@string/trailer_thumb_content_desc"
+                android:visibility="gone"
                 android:src="@drawable/trailer_thumbnail_default" />
 
             <ImageView
                 android:id="@+id/trailer3_image"
-                android:layout_width="150dp"
+                android:layout_width="136dp"
                 android:layout_height="100dp"
+                android:visibility="gone"
                 android:contentDescription="@string/trailer_thumb_content_desc"
                 android:src="@drawable/trailer_thumbnail_default" />
         </LinearLayout>
