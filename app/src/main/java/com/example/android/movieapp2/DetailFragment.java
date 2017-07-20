@@ -15,6 +15,8 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.preference.PreferenceManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -56,7 +58,6 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     private static final String TRAILER_IMG_URL_B = "/0.jpg";
     private static final String TRAILER_VIDEO_URL = "https://www.youtube.com/watch?v=";
 
-
     // the fragment initialization parameters
     private final String ARG_LOCAL_ID = "localID";
     private final String ARG_MOVIE_TITLE = "title";
@@ -66,13 +67,27 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     // loader ID
     private static final int DETAIL_LOADER_ID = 111;
 
-    // views
-    private TextView mTitleV;
-    private TextView mReleaseV;
-    private TextView mPlotV;
-    private RatingBar mRatingBar;
-    private ImageView mPosterV;
-    private ToggleButton mFavorite_button;
+    // bind views
+    @BindView(R.id.movie_title)
+    TextView mTitleV;
+    @BindView(R.id.release_year)
+    TextView mReleaseV;
+    @BindView(R.id.plot)
+    TextView mPlotV;
+    @BindView(R.id.ratingBar)
+    RatingBar mRatingBar;
+    @BindView(R.id.poster_detail_view)
+    ImageView mPosterV;
+    @BindView(R.id.favorite_checkbox_view)
+    ToggleButton mFavorite_button;
+    @BindView(R.id.trailer1_image)
+    ImageView mTrailer1Image;
+    @BindView(R.id.trailer2_image)
+    ImageView mTrailer2Image;
+    @BindView(R.id.trailer3_image)
+    ImageView mTrailer3Image;
+    @BindView(R.id.reviews_view)
+    RecyclerView mReviewsRecyclerView;
 
     // Trailer vars
     private static ArrayList<String> sTrailerList;
@@ -83,16 +98,13 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     private static String trailer2_thumb_url;
     private static String trailer3_thumb_url;
 
-    @BindView(R.id.trailer1_image)
-    ImageView mTrailer1Image;
-    @BindView(R.id.trailer2_image)
-    ImageView mTrailer2Image;
-    @BindView(R.id.trailer3_image)
-    ImageView mTrailer3Image;
-
     // db favorite-state constants
     private static final int FAVORITED = 1;
     private static final int NOT_FAVORITED = 0;
+
+    // Review Adapter
+
+    private static ContentValues[] sReviewArray;
 
     private OnFragmentInteractionListener mListener;
 
@@ -169,12 +181,21 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         super.onActivityCreated(savedInstanceState);
     }
 
+    public static void setReviewArray(ContentValues[] cvArray) {
+        sReviewArray = cvArray;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_movie_detail, container, false); // inflate detail view
         ButterKnife.bind(this, view);
 
+        // setup reviews recyclerview
+        mReviewsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        ReviewAdapter reviewAdapter = new ReviewAdapter(sReviewArray);
+        mReviewsRecyclerView.setAdapter(reviewAdapter);
+        mReviewsRecyclerView.setHasFixedSize(true);
 
         // clear image views
         mTrailer1Image.setImageResource(R.drawable.detail_imageview_clear);
@@ -186,7 +207,9 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             @Override
             public void run() {
                 // if no trailers, show no trailer image
-                if (sTrailerList.size() == 0) mTrailer1Image.setImageResource(R.drawable.no_video_img);
+                Log.i(LOG_TAG, "trailer size: " + sTrailerList.size());
+                if (sTrailerList.size() == 0)
+                    mTrailer1Image.setImageResource(R.drawable.no_video_img);
 
                 // for each trailer, set image else do not show image view
                 if (sTrailerList.size() >= 1) {
@@ -194,7 +217,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
                             .load(trailer1_thumb_url)
                             .error(R.drawable.error)
                             .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
-                            .placeholder(R.drawable.placeholder)
+                            .placeholder(R.drawable.detail_imageview_clear)
                             .centerCrop()
                             .resize(400, 300)
                             .into(mTrailer1Image);
@@ -207,7 +230,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
                             .error(R.drawable.error)
                             .resize(400, 300)
                             .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
-                            .placeholder(R.drawable.placeholder)
+                            .placeholder(R.drawable.detail_imageview_clear)
                             .centerCrop()
                             .into(mTrailer2Image);
                 }
@@ -218,7 +241,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
                             .error(R.drawable.error)
                             .resize(400, 300)
                             .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
-                            .placeholder(R.drawable.placeholder)
+                            .placeholder(R.drawable.detail_imageview_clear)
                             .centerCrop()
                             .into(mTrailer3Image);
                 }
@@ -249,13 +272,6 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             }
         });
 
-        // get views
-        mTitleV = (TextView) view.findViewById(R.id.movie_title);
-        mReleaseV = (TextView) view.findViewById(R.id.release_year);
-        mPlotV = (TextView) view.findViewById(R.id.plot);
-        mRatingBar = (RatingBar) view.findViewById(R.id.ratingBar);
-        mPosterV = (ImageView) view.findViewById(R.id.poster_detail_view);
-        mFavorite_button = (ToggleButton) view.findViewById(R.id.favorite_checkbox_view);
 
         // load data from DB
         runLoader();
@@ -279,7 +295,6 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
                 }
             }
         });
-
 
         return view;
     }
@@ -376,22 +391,6 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
     }
 
-    @Override
-    public void onPause() {
-
-
-        Log.i(LOG_TAG, "onPause Run");
-        super.onPause();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        mTrailer1Image.setImageResource(R.drawable.detail_imageview_clear);
-        mTrailer2Image.setImageResource(R.drawable.detail_imageview_clear);
-        mTrailer3Image.setImageResource(R.drawable.detail_imageview_clear);
-    }
-
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -408,7 +407,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnFragmentInteractionListener {
+    interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }

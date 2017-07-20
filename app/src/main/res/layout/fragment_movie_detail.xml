@@ -41,23 +41,22 @@
         android:layout_width="43dp"
         android:layout_height="15dp"
         android:textColor="@color/colorDetailText"
-        tools:text="(2017)"
-        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toRightOf="@+id/ratingBar"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="@+id/ratingBar"
-        android:layout_marginTop="0dp" />
+        tools:text="(2017)" />
 
     <RatingBar
         android:id="@+id/ratingBar"
         style="@style/Widget.AppCompat.RatingBar.Small"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:isIndicator="true"
         android:numStars="5"
         android:rating="3.5"
         app:layout_constraintLeft_toRightOf="@+id/poster_detail_view"
         app:layout_constraintRight_toLeftOf="@+id/release_year"
-        android:layout_marginTop="8dp"
         app:layout_constraintTop_toBottomOf="@+id/movie_title" />
 
 
@@ -103,17 +102,16 @@
         app:layout_constraintRight_toRightOf="@+id/poster_detail_view" />
 
     <HorizontalScrollView
+        android:id="@+id/horizontalScrollView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginTop="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="@+id/poster_detail_view"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/poster_detail_view"
-        app:layout_constraintVertical_bias="0.0"
-        android:layout_marginEnd="8dp">
+        app:layout_constraintTop_toBottomOf="@+id/poster_detail_view">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -133,27 +131,37 @@
                 android:layout_height="100dp"
                 android:layout_gravity="center_horizontal"
                 android:contentDescription="@string/trailer_thumb_content_desc"
-                android:src="@drawable/no_video_img"
-                tools:layout_editor_absoluteX="8dp"
-                tools:layout_editor_absoluteY="-25dp" />
+                android:src="@drawable/no_video_img" />
 
             <ImageView
                 android:id="@+id/trailer2_image"
                 android:layout_width="136dp"
                 android:layout_height="100dp"
                 android:contentDescription="@string/trailer_thumb_content_desc"
-                android:visibility="gone"
-                android:src="@drawable/trailer_thumbnail_default" />
+                android:src="@drawable/trailer_thumbnail_default"
+                android:visibility="gone" />
 
             <ImageView
                 android:id="@+id/trailer3_image"
                 android:layout_width="136dp"
                 android:layout_height="100dp"
-                android:visibility="gone"
                 android:contentDescription="@string/trailer_thumb_content_desc"
-                android:src="@drawable/trailer_thumbnail_default" />
+                android:src="@drawable/trailer_thumbnail_default"
+                android:visibility="gone" />
         </LinearLayout>
     </HorizontalScrollView>
 
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/reviews_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/horizontalScrollView" />
 
 </android.support.constraint.ConstraintLayout>

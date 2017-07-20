@@ -22,8 +22,10 @@ public final class JsonUtils {
     private static final String POPULAR_VALUE = "popularity.desc";
     private static final String RATING_VALUE = "vote_average.desc";
     private static final String FETCH_TRAILERS_VALUE = "trailers";
+    private static final String FETCH_REVIEWS_VALUE = "reviews";
+
     private static ArrayList<String> sTrailerList = new ArrayList<>();
-    private static Context mContext;
+
 
     public static ContentValues[] parseJson(Context context, String bufferedString, String type) throws JSONException {
 
@@ -35,14 +37,14 @@ public final class JsonUtils {
         final String RATING_KEY = "vote_average";
         final String POSTER_KEY = "poster_path";
         final String ID_KEY = "id";
+        final String AUTHOR_KEY = "author";
+        final String REVIEW_KEY = "content";
         final String BASE_IMAGE_URL = "http://image.tmdb.org/t/p/w185";
 
         // Trailer Api keys
         final String VIDEO_ID = "key";
         final String TRAILER_VALUE = "Trailer";
         final String TYPE_KEY = "type";
-
-        mContext = context;
 
         // create json object and array from buffered stream
         JSONObject root = new JSONObject(bufferedString);
@@ -84,19 +86,26 @@ public final class JsonUtils {
                         String videoID = element.getString(VIDEO_ID); // get the youtube trailer id
                         addIdToArrayList(videoID); // add id to array list using helper
                     }
+                    break;
+                case FETCH_REVIEWS_VALUE:
+                    String author = element.getString(AUTHOR_KEY);
+                    String review = element.getString(REVIEW_KEY);
+
+                    ContentValues cvReview = new ContentValues();
+                    cvReview.put(AUTHOR_KEY, author);
+                    cvReview.put(REVIEW_KEY, review);
+
+                    contentValues[i] = cvReview;
+
             }
         }
 
         DetailFragment.setTrailerArrayList(sTrailerList);
 
         // return ContentValues[] if array list is empty
-        if (sTrailerList.size() == 0)
-
-        {
+        if (sTrailerList.size() == 0) {
             return contentValues;
-        } else
-
-        {
+        } else {
             return convertArrayListToContentValue(); // convert array list to a ContentValue[] and return
         }
 

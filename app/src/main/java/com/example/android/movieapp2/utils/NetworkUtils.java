@@ -33,18 +33,18 @@ public class NetworkUtils {
 
     private static RequestQueue sRequestQueue;
 
-    public static void initRequestQueue(Context context){
-        if(sRequestQueue == null){
+    public static void initRequestQueue(Context context) {
+        if (sRequestQueue == null) {
             sRequestQueue = Volley.newRequestQueue(context);
         }
     }
 
-    public static void addToRequestQueue(Request<String> request, String tag){
+    public static void addToRequestQueue(Request<String> request, String tag) {
         request.setTag(TextUtils.isEmpty(tag) ? TAG : tag);
         sRequestQueue.add(request);
     }
 
-    public static void cancelRequest(Request<String> request, String tag){
+    public static void cancelRequest(Request<String> request, String tag) {
         request.setTag(TextUtils.isEmpty(tag) ? TAG : tag);
         sRequestQueue.cancelAll(request);
     }
@@ -70,7 +70,7 @@ public class NetworkUtils {
         return uri.toString();
     }
 
-    public static String buildMovieDetailUrl(Context context, String id){
+    public static String buildMovieDetailUrl(Context context, String id) {
         Uri uri = Uri.parse(context.getString(R.string.trailer_base_url) + id + "/videos?").buildUpon()
                 .appendQueryParameter(context.getString(R.string.api_code_key), BuildConfig.MOVIE_API_KEY)
                 .build();
@@ -85,4 +85,21 @@ public class NetworkUtils {
         return uri.toString();
 
     }
+
+    public static String buildReviewUrlString(Context context, String id) {
+        Uri uri = Uri.parse("https://api.themoviedb.org/3/movie/" + id + "/reviews?").buildUpon()
+                .appendQueryParameter(context.getString(R.string.api_code_key), BuildConfig.MOVIE_API_KEY)
+                .build();
+
+        URL url = null;
+        try {
+            url = new URL(uri.toString());
+        } catch (MalformedURLException e) {
+            Log.e(LOG_TAG, "Malformed URL: " + e);
+        }
+        Log.e(LOG_TAG, "Get Reviews URL: " + url);
+
+        return uri.toString();
+    }
+
 }

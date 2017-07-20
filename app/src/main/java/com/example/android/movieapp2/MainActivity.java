@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private static final String FAVORITES_VALUE = "favorites";
     private static final String FAVORITED_DB_VALUE = "1";
     private static final String FETCH_TRAILERS_VALUE = "trailers";
+    private static final String FETCH_REVIEWS_VALUE = "reviews";
 
     private MovieAdapter mAdapter;
     private static final int LANDSCAPE_COLUMNS = 3;
@@ -54,6 +55,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private SharedPreferences.OnSharedPreferenceChangeListener mListener;
     private SharedPreferences mPref;
     private String mSortValue = "popularity.desc";
+
+    private ContentValues[] cvArray;
     // TODO: fetch more results when scrolled to end
 
     @Override
@@ -406,7 +409,28 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         NetworkUtils.addToRequestQueue(detailRequest, FETCH_TRAILERS_VALUE);
 
-        //https://img.youtube.com/vi/DpSaTrW4leg/0.jpg
+        StringRequest reviewRequest = new StringRequest(NetworkUtils.buildReviewUrlString(this, sourceID), new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                ContentValues[] cv = null;
+                try {
+                    cv = JsonUtils.parseJson(getApplicationContext(), response, FETCH_REVIEWS_VALUE);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                Log.i(LOG_TAG, "Review Size: " + cv.length);
+                DetailFragment.setReviewArray(cv);
+
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(LOG_TAG, "Error fetching reviews" + error);
+            }
+        });
+
+        NetworkUtils.addToRequestQueue(reviewRequest, FETCH_REVIEWS_VALUE);
     }
 
 
