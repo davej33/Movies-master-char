@@ -81,7 +81,7 @@ public class NetworkUtils {
         } catch (MalformedURLException e) {
             Log.e(LOG_TAG, "Malformed URL: " + e);
         }
-        Log.e(LOG_TAG, "Trailer URL: " + url);
+        Log.e(LOG_TAG, "Get Trailers URL: " + url);
         return uri.toString();
 
     }

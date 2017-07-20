@@ -87,6 +87,8 @@ public final class JsonUtils {
             }
         }
 
+        DetailFragment.setTrailerArrayList(sTrailerList);
+
         // return ContentValues[] if array list is empty
         if (sTrailerList.size() == 0)
 
@@ -122,7 +124,6 @@ public final class JsonUtils {
 
         ContentValues[] cvArray = new ContentValues[1]; // instantiate ContentValue[] with single ContentValue
         cvArray[0] = cv; // add ContentValue to ContentValue[]
-        DetailFragment.setTrailerArrayList(mContext, sTrailerList);
         return cvArray;
     }
 

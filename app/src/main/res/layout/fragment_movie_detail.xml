@@ -3,22 +3,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#000"
+    android:background="@color/colorDetailsBackground"
     tools:context="com.example.android.movieapp2.DetailFragment">
 
     <!-- TODO: Update blank fragment layout -->
 
     <ImageView
         android:id="@+id/poster_detail_view"
-        android:layout_width="187dp"
-        android:layout_height="277dp"
+        android:layout_width="144dp"
+        android:layout_height="205dp"
         android:layout_marginLeft="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:background="@color/colorPrimaryDark"
         android:contentDescription="@string/poster_content_desc"
         android:scaleType="fitXY"
-        android:src="@drawable/placeholder_detail_view"
+        android:src="@drawable/placeholder"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_goneMarginLeft="0dp" />
@@ -40,11 +40,11 @@
         android:id="@+id/release_year"
         android:layout_width="43dp"
         android:layout_height="15dp"
-        android:textColor="#fff"
-        app:layout_constraintLeft_toRightOf="@+id/poster_detail_view"
-        app:layout_constraintRight_toLeftOf="@+id/ratingBar"
-        app:layout_constraintTop_toTopOf="@+id/ratingBar"
-        tools:text="(2017)" />
+        android:textColor="@color/colorDetailText"
+        tools:text="(2017)"
+        tools:layout_editor_absoluteY="34dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/ratingBar" />
 
     <RatingBar
         android:id="@+id/ratingBar"
@@ -52,13 +52,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
-        android:layout_marginTop="8dp"
         android:isIndicator="true"
         android:numStars="5"
         android:rating="3.5"
-        app:layout_constraintLeft_toRightOf="@+id/release_year"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/movie_title" />
+        tools:layout_editor_absoluteY="34dp"
+        app:layout_constraintLeft_toRightOf="@+id/poster_detail_view"
+        app:layout_constraintRight_toLeftOf="@+id/release_year" />
 
 
     <ScrollView
@@ -83,7 +82,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="top"
             android:layout_marginTop="0dp"
-            android:textColor="#fff"
+            android:textColor="@color/colorDetailText"
             tools:text="Picasso and Glide An extremely common problem that Android developers
             face is the proper use of images in their application. Including many high quality
             images will drastically increase your apk size, while downloading images over the network
@@ -95,8 +94,6 @@
         android:id="@+id/favorite_checkbox_view"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:layout_marginBottom="0dp"
-        android:layout_marginRight="0dp"
         android:background="@drawable/favorite_checkbox"
         android:stateListAnimator="@null"
         android:textOff=""
@@ -104,18 +101,18 @@
         app:layout_constraintBottom_toBottomOf="@+id/poster_detail_view"
         app:layout_constraintRight_toRightOf="@+id/poster_detail_view" />
 
-    <ScrollView
+    <HorizontalScrollView
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginBottom="0dp"
-        android:layout_marginLeft="0dp"
-        android:layout_marginRight="0dp"
-        android:layout_marginTop="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="@+id/poster_detail_view"
-        app:layout_constraintRight_toRightOf="@+id/poster_detail_view"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/poster_detail_view"
-        app:layout_constraintVertical_bias="0.714">
+        app:layout_constraintVertical_bias="0.0"
+        android:layout_marginEnd="8dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -124,7 +121,6 @@
             android:layout_marginLeft="0dp"
             android:layout_marginRight="0dp"
             android:layout_marginTop="0dp"
-            android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="@+id/poster_detail_view"
             app:layout_constraintRight_toRightOf="@+id/poster_detail_view"
@@ -132,25 +128,28 @@
 
             <ImageView
                 android:id="@+id/trailer1_image"
+                android:layout_width="150dp"
+                android:layout_height="100dp"
                 android:contentDescription="@string/trailer_thumb_content_desc"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:src="@drawable/trailer_thumbnail_default" />
+                android:src="@drawable/trailer_thumbnail_default"
+                tools:layout_editor_absoluteX="8dp"
+                tools:layout_editor_absoluteY="-25dp" />
 
             <ImageView
                 android:id="@+id/trailer2_image"
+                android:layout_width="150dp"
+                android:layout_height="100dp"
                 android:contentDescription="@string/trailer_thumb_content_desc"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:src="@drawable/trailer_thumbnail_default" />
 
             <ImageView
                 android:id="@+id/trailer3_image"
+                android:layout_width="150dp"
+                android:layout_height="100dp"
                 android:contentDescription="@string/trailer_thumb_content_desc"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:src="@drawable/trailer_thumbnail_default" />
         </LinearLayout>
-    </ScrollView>
+    </HorizontalScrollView>
+
 
 </android.support.constraint.ConstraintLayout>

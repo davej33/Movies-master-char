@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -49,6 +50,12 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     // Log tag
     private static final String LOG_TAG = DetailFragment.class.getSimpleName();
 
+    // URL CONSTANTS FOR VIDEOS AND THUMBNAILS
+    private static final String TRAILER_IMG_URL_A = "https://img.youtube.com/vi/";
+    private static final String TRAILER_IMG_URL_B = "/0.jpg";
+    private static final String TRAILER_VIDEO_URL = "https://www.youtube.com/watch?v=";
+
+
     // the fragment initialization parameters
     private final String ARG_LOCAL_ID = "localID";
     private final String ARG_MOVIE_TITLE = "title";
@@ -68,7 +75,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
     // Trailer vars
     private static ArrayList<String> sTrailerList;
-    private static Context sContext;
+
     private static String trailer1_video_url;
     private static String trailer2_video_url;
     private static String trailer3_video_url;
@@ -93,8 +100,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         // Required empty public constructor
     }
 
-    public static void setTrailerArrayList(Context context, ArrayList<String> trailerArrayList) {
-        sContext = context;
+    public static void setTrailerArrayList(ArrayList<String> trailerArrayList) {
         sTrailerList = trailerArrayList;
         buildTrailerUrls();
     }
@@ -103,16 +109,20 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         for (int i = 0; i < sTrailerList.size(); i++) {
             switch (i) {
                 case 0:
-                    String s1 = sTrailerList.get(0);
-                    trailer1_thumb_url = sContext.getString(R.string.trailer_img_url_a) + s1 + sContext.getString(R.string.trailer_img_url_b);
+                    String movieIdAtIndex0 = sTrailerList.get(0);
+                    trailer1_thumb_url = TRAILER_IMG_URL_A + movieIdAtIndex0 + TRAILER_IMG_URL_B;
+                    trailer1_video_url = TRAILER_VIDEO_URL + movieIdAtIndex0;
                     break;
                 case 1:
-                    String s2 = sTrailerList.get(1);
-                    trailer2_thumb_url = sContext.getString(R.string.trailer_img_url_a) + s2 + sContext.getString(R.string.trailer_img_url_b);
+                    String movieIdAtIndex1 = sTrailerList.get(1);
+                    trailer2_thumb_url = TRAILER_IMG_URL_A + movieIdAtIndex1 + TRAILER_IMG_URL_B;
+                    trailer1_video_url = TRAILER_VIDEO_URL + movieIdAtIndex1;
                     break;
                 case 2:
-                    String s3 = sTrailerList.get(2);
-                    trailer1_thumb_url = sContext.getString(R.string.trailer_img_url_a) + s3 + sContext.getString(R.string.trailer_img_url_b);
+                    String movieIdAtIndex2 = sTrailerList.get(2);
+                    trailer3_thumb_url = TRAILER_IMG_URL_A + movieIdAtIndex2 + TRAILER_IMG_URL_B;
+                    trailer1_video_url = TRAILER_VIDEO_URL + movieIdAtIndex2;
+                    break;
             }
         }
     }
@@ -165,6 +175,10 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         View view = inflater.inflate(R.layout.fragment_movie_detail, container, false); // inflate detail view
         ButterKnife.bind(this, view);
 
+        mTrailer1Image.setImageResource(R.drawable.detail_imageview_clear);
+        mTrailer2Image.setImageResource(R.drawable.detail_imageview_clear);
+        mTrailer3Image.setImageResource(R.drawable.detail_imageview_clear);
+
         // get views
         mTitleV = (TextView) view.findViewById(R.id.movie_title);
         mReleaseV = (TextView) view.findViewById(R.id.release_year);
@@ -197,30 +211,40 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         });
         // Inflate the layout for this fragment
 
-        Picasso.with(sContext)
-                .load(trailer1_thumb_url)
-                .error(R.drawable.error)
-                .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
-                .placeholder(R.drawable.placeholder)
-                .centerCrop()
-                .resize(400, 300)
-                .into(mTrailer1Image);
-        Picasso.with(sContext)
-                .load(trailer2_thumb_url)
-                .error(R.drawable.error)
-                .resize(400, 300)
-                .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
-                .placeholder(R.drawable.placeholder)
-                .centerCrop()
-                .into(mTrailer2Image);
-        Picasso.with(sContext)
-                .load(trailer3_thumb_url)
-                .error(R.drawable.error)
-                .resize(400, 300)
-                .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
-                .placeholder(R.drawable.placeholder)
-                .centerCrop()
-                .into(mTrailer3Image);
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                // add trailer images
+                Picasso.with(getContext())
+                        .load(trailer1_thumb_url)
+                        .error(R.drawable.error)
+                        .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
+                        .placeholder(R.drawable.placeholder)
+                        .centerCrop()
+                        .resize(400, 300)
+                        .into(mTrailer1Image);
+                Picasso.with(getContext())
+                        .load(trailer2_thumb_url)
+                        .error(R.drawable.error)
+                        .resize(400, 300)
+                        .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
+                        .placeholder(R.drawable.placeholder)
+                        .centerCrop()
+                        .into(mTrailer2Image);
+                Picasso.with(getContext())
+                        .load(trailer3_thumb_url)
+                        .error(R.drawable.error)
+                        .resize(400, 300)
+                        .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
+                        .placeholder(R.drawable.placeholder)
+                        .centerCrop()
+                        .into(mTrailer3Image);
+
+            }
+        },1000);
+
+
         return view;
     }
 
@@ -317,9 +341,19 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     }
 
     @Override
-    public void onDestroy() {
+    public void onPause() {
 
+
+        Log.i(LOG_TAG, "onPause Run");
+        super.onPause();
+    }
+
+    @Override
+    public void onDestroy() {
         super.onDestroy();
+        mTrailer1Image.setImageResource(R.drawable.detail_imageview_clear);
+        mTrailer2Image.setImageResource(R.drawable.detail_imageview_clear);
+        mTrailer3Image.setImageResource(R.drawable.detail_imageview_clear);
     }
 
 
