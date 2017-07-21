@@ -27,7 +27,7 @@ public final class JsonUtils {
     private static ArrayList<String> sTrailerList = new ArrayList<>();
 
 
-    public static ContentValues[] parseJson(Context context, String bufferedString, String type) throws JSONException {
+    public static ContentValues[] parseJson(String bufferedString, String type) throws JSONException {
 
         // Query Api keys
         final String TITLE_KEY = "title";
@@ -81,6 +81,7 @@ public final class JsonUtils {
                     contentValues[i] = cv; // add ContentValues to ContentValues[]
                     break;
                 case FETCH_TRAILERS_VALUE:
+                    Log.i("JsonUtils","trailer fetch run check: ");
                     String videoType = element.getString(TYPE_KEY); // get the String value at key "type"
                     if (videoType.equals(TRAILER_VALUE)) { // if value match "Trailer"
                         String videoID = element.getString(VIDEO_ID); // get the youtube trailer id
@@ -101,6 +102,7 @@ public final class JsonUtils {
         }
 
         DetailFragment.setTrailerArrayList(sTrailerList);
+        Log.i("JsonUtils","trailerList count: " + sTrailerList.size());
 
         // return ContentValues[] if array list is empty
         if (sTrailerList.size() == 0) {

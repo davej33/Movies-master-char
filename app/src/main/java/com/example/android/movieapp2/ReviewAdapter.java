@@ -55,10 +55,6 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
         }
     }
 
-    public static void addReviewData(ContentValues[] values) {
-        sReviews = values;
-    }
-
     class ReviewViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.review_text) TextView review;

@@ -102,8 +102,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     private static final int FAVORITED = 1;
     private static final int NOT_FAVORITED = 0;
 
-    // Review Adapter
-
+    // Review Array
     private static ContentValues[] sReviewArray;
 
     private OnFragmentInteractionListener mListener;
@@ -114,12 +113,16 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
     public static void setTrailerArrayList(ArrayList<String> trailerArrayList) {
         sTrailerList = trailerArrayList;
+        Log.i(LOG_TAG, "setTrailerList count: " + sTrailerList.size());
+        Log.i(LOG_TAG, "setTrailerList arg count: " + trailerArrayList.size());
         buildTrailerUrls();
     }
 
     private static void buildTrailerUrls() {
+        Log.i(LOG_TAG, "setTrailerList count: " + sTrailerList.size());
         for (int i = 0; i < sTrailerList.size(); i++) {
             switch (i) {
+
                 case 0:
                     String movieIdAtIndex0 = sTrailerList.get(0);
                     trailer1_thumb_url = TRAILER_IMG_URL_A + movieIdAtIndex0 + TRAILER_IMG_URL_B;
@@ -137,6 +140,15 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
                     break;
             }
         }
+    }
+
+    private static void clearUrls() {
+        trailer1_thumb_url = "";
+        trailer1_video_url = "";
+        trailer2_thumb_url = "";
+        trailer2_video_url = "";
+        trailer3_thumb_url = "";
+        trailer3_video_url = "";
     }
 
 
@@ -208,22 +220,21 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             public void run() {
                 // if no trailers, show no trailer image
                 Log.i(LOG_TAG, "trailer size: " + sTrailerList.size());
-                if (sTrailerList.size() == 0)
+                if (trailer1_video_url == null) {
                     mTrailer1Image.setImageResource(R.drawable.no_video_img);
-
-                // for each trailer, set image else do not show image view
-                if (sTrailerList.size() >= 1) {
-                    Picasso.with(getContext())
-                            .load(trailer1_thumb_url)
-                            .error(R.drawable.error)
-                            .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
-                            .placeholder(R.drawable.detail_imageview_clear)
-                            .centerCrop()
-                            .resize(400, 300)
-                            .into(mTrailer1Image);
+                } else {
+                    // for each trailer, set image else do not show image view
+                        Picasso.with(getContext())
+                                .load(trailer1_thumb_url)
+                                .error(R.drawable.error)
+                                .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
+                                .placeholder(R.drawable.detail_imageview_clear)
+                                .centerCrop()
+                                .resize(400, 300)
+                                .into(mTrailer1Image);
                 }
 
-                if (sTrailerList.size() >= 2) {
+                if (trailer2_video_url != null) {
                     mTrailer2Image.setVisibility(View.VISIBLE);
                     Picasso.with(getContext())
                             .load(trailer2_thumb_url)
@@ -234,7 +245,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
                             .centerCrop()
                             .into(mTrailer2Image);
                 }
-                if (sTrailerList.size() >= 3) {
+                if (trailer3_video_url != null) {
                     mTrailer3Image.setVisibility(View.VISIBLE);
                     Picasso.with(getContext())
                             .load(trailer3_thumb_url)
@@ -391,6 +402,11 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Log.i(LOG_TAG,"onDestroy run");
+    }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {

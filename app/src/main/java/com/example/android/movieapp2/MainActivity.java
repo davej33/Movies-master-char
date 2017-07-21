@@ -161,7 +161,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                         // parse
                         ContentValues[] cv = null;
                         try {
-                            cv = JsonUtils.parseJson(getApplicationContext(), response, mSortValue);
+                            cv = JsonUtils.parseJson(response, mSortValue);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -382,23 +382,23 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             public void onResponse(String response) {
                 ContentValues[] cv = new ContentValues[1];
                 try {
-                    cv = JsonUtils.parseJson(getApplicationContext(), response, FETCH_TRAILERS_VALUE);
+                    cv = JsonUtils.parseJson(response, FETCH_TRAILERS_VALUE);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
 
-                Uri updateUri = Uri.parse(MovieContract.MovieEntry.MOVIE_TABLE_URI + "/" + dbRowID);
-                int rowUpdated;
-                if (cv != null && cv.length > 0) {
-                    try {
-                        rowUpdated = getContentResolver().update(updateUri, cv[0], null, null);
-                        Log.i(LOG_TAG, "Trailers update successful: " + rowUpdated);
-                    } catch (SQLException e) {
-                        Log.e(LOG_TAG, "SQL update error");
-                    }
-                } else {
-                    Log.e(LOG_TAG, "No CV for trailer");
-                }
+//                Uri updateUri = Uri.parse(MovieContract.MovieEntry.MOVIE_TABLE_URI + "/" + dbRowID);
+//                int rowUpdated;
+//                if (cv != null && cv.length > 0) {
+//                    try {
+//                        rowUpdated = getContentResolver().update(updateUri, cv[0], null, null);
+//                        Log.i(LOG_TAG, "Trailers update successful: " + rowUpdated);
+//                    } catch (SQLException e) {
+//                        Log.e(LOG_TAG, "SQL update error");
+//                    }
+//                } else {
+//                    Log.e(LOG_TAG, "No CV for trailer");
+//                }
             }
         }, new Response.ErrorListener() {
             @Override
@@ -414,7 +414,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             public void onResponse(String response) {
                 ContentValues[] cv = null;
                 try {
-                    cv = JsonUtils.parseJson(getApplicationContext(), response, FETCH_REVIEWS_VALUE);
+                    cv = JsonUtils.parseJson(response, FETCH_REVIEWS_VALUE);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
