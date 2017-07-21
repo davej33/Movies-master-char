@@ -23,18 +23,23 @@ public final class MovieDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        final String CREATE_DB = "CREATE TABLE " + MovieEntry.MOVIE_TABLE + " (" +
+        final String CREATE_MOVIE_TABLE = "CREATE TABLE " + MovieEntry.MOVIE_TABLE + " (" +
                 MovieEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                MovieEntry.MOVIE_TMDB_ID + " INTEGER UNIQUE NOT NULL, " +
+                MovieEntry.MOVIE_TMDB_ID + " INTEGER NOT NULL, " +
                 MovieEntry.MOVIE_TITLE + " TEXT NOT NULL, " +
                 MovieEntry.MOVIE_RELEASE_DATE + " TEXT NOT NULL, " +
                 MovieEntry.MOVIE_PLOT + " TEXT NOT NULL, " +
                 MovieEntry.MOVIE_POPULARITY + " FLOAT NOT NULL, " +
                 MovieEntry.MOVIE_RATING + " FLOAT NOT NULL, " +
+                MovieEntry.MOVIE_PREFERENCE_TYPE + " INTEGER, " +
                 MovieEntry.MOVIE_FAVORITE + " INTEGER DEFAULT 0, " +
-                MovieEntry.MOVIE_POSTER + " BLOB);";
+                MovieEntry.MOVIE_POSTER + " TEXT, " +
+                MovieEntry.MOVIE_TRAILER_1 + " TEXT, " +
+                MovieEntry.MOVIE_TRAILER_2 + " TEXT, " +
+                MovieEntry.MOVIE_TRAILER_3 + " TEXT, " +
+                "UNIQUE (" + MovieEntry.MOVIE_TMDB_ID + ") ON CONFLICT IGNORE);";
 
-        db.execSQL(CREATE_DB);
+        db.execSQL(CREATE_MOVIE_TABLE);
 
     }
 

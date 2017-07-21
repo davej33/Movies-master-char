@@ -24,11 +24,8 @@
             android:name=".data.MovieContentProvider"
             android:authorities="com.example.android.movieapp2" />
 
-        <service
-            android:name=".sync.MovieIntentService"
-            android:exported="false" />
-
-        <activity android:name=".DetailsActivity" />
+        <activity android:name=".DetailsActivity"
+            android:parentActivityName=".MainActivity"/>
         <activity android:name=".SettingsActivity"
             android:parentActivityName=".MainActivity"/>
 

@@ -7,4 +7,15 @@
         android:id="@+id/action_settings"
         app:showAsAction="never"
         />
+    <item
+        android:title="Chec Fav DB"
+        android:id="@+id/check_fav_db"
+        app:showAsAction="never"
+        />
+
+    <item
+        android:title="@string/refresh"
+        android:id="@+id/action_refresh"
+        android:icon="@mipmap/ic_refresh"
+        app:showAsAction="ifRoom"/>
 </menu>

@@ -2,7 +2,8 @@
     <string name="app_name">Movie Boom</string>
     <string name="title_activity_preference">Preferences</string>
     <string name="api_code_key">api_key</string>
-    <string name="network_query_base_url">https://api.themoviedb.org/3/discover/movie?</string>
+    <string name="query_base_url">https://api.themoviedb.org/3/discover/movie?</string>
+    <string name="trailer_base_url">https://api.themoviedb.org/3/movie/</string>
 
     <!-- Strings related to Settings -->
 
@@ -24,6 +25,9 @@
     <string name="pref_sort_rating_label">Highest Rating</string>
     <string name="pref_sort_rating_value">vote_average.desc</string>
 
+    <string name="pref_sort_fav_label">Favorites</string>
+    <string name="pref_sort_fav_value">favorites</string>
+
     <!-- Favorites Preference -->
     <string name="pref_fav_label">Favorites</string>
     <string name="pref_fav_key">favorites</string>
@@ -31,5 +35,13 @@
     <!-- Detail Activity Extras -->
     <string name="local_id_key">local_id</string>
     <string name="movie_title_key">title</string>
+    <string name="refresh">Refresh</string>
+
+    <!-- UI Strings -->
+    <string name="poster_content_desc">Movie Poster</string>
+    <string name="trailer_thumb_content_desc">Trailer Image</string>
+    <string name="trailer_img_url_a">https://img.youtube.com/vi/</string>
+    <string name="trailer_img_url_b">/0.jpg</string>
+    <string name="trailer_url">https://www.youtube.com/watch?v=</string>
 
 </resources>

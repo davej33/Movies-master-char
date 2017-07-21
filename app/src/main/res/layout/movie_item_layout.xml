@@ -10,15 +10,18 @@
             android:id="@+id/cover_image"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:scaleType="fitCenter" />
+            android:scaleType="fitCenter"
+            android:src="@drawable/placeholder_detail_view"/>
 
-        <CheckBox
+        <ToggleButton
             android:id="@+id/favorite_button"
-            style="?android:attr/starStyle"
+            android:background="@drawable/favorite_checkbox"
+            android:textOff=""
+            android:textOn=""
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-             />
+            android:layout_alignParentBottom="true"
+            android:layout_alignRight="@+id/cover_image"
+            android:layout_alignEnd="@+id/cover_image" />
 
     </RelativeLayout>

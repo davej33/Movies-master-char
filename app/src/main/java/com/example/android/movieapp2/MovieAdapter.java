@@ -1,5 +1,6 @@
 package com.example.android.movieapp2;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
@@ -8,7 +9,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.ToggleButton;
 
 import com.example.android.movieapp2.data.MovieContract;
 import com.example.android.movieapp2.utils.FavoriteUtils;
@@ -27,8 +30,10 @@ public final class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieV
     private static int mImageWidth;
     private static int mImageHeight;
     private ListItemClickListener mOnClickListener;
+    private String mTitleFav;
 
-    public interface ListItemClickListener{
+
+    public interface ListItemClickListener {
         void onListItemClick(int clickedItemIndex);
     }
 
@@ -40,7 +45,7 @@ public final class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieV
 
     }
 
-//    private void setAdapterItemSize(int imageWidth, int imageHeight){
+    //    private void setAdapterItemSize(int imageWidth, int imageHeight){
 //        RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.item_relative_layout);
 //        relativeLayout.getLayoutParams().height = imageHeight;
 //        relativeLayout.getLayoutParams().width = imageWidth;
@@ -54,15 +59,14 @@ public final class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieV
         view.getLayoutParams().width = mImageWidth;
 
         // create holder using view
-        MovieViewHolder holder = new MovieViewHolder(view);
-
-        return holder;
+        return new MovieViewHolder(view);
     }
 
-    public static int getmImageWidth(){
+    public static int getmImageWidth() {
         return mImageWidth;
     }
-    public static int getmImageHeight(){
+
+    public static int getmImageHeight() {
         return mImageHeight;
     }
 
@@ -71,10 +75,10 @@ public final class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieV
         mCursor.moveToPosition(position);
 
         // poster
-        int posterColId = mCursor.getColumnIndex(MovieContract.MovieEntry.MOVIE_POSTER);
-        String posterUrl = mCursor.getString(posterColId);
+        final int posterColId = mCursor.getColumnIndex(MovieContract.MovieEntry.MOVIE_POSTER);
+        String poster = mCursor.getString(posterColId);
         Picasso.with(mContext)
-                .load(posterUrl)
+                .load(poster)
                 .error(R.drawable.error)
                 .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
                 .resize(mImageWidth, mImageHeight)
@@ -82,7 +86,7 @@ public final class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieV
                 .centerCrop()
                 .into(holder.poster);
 
-        int titleColId = mCursor.getColumnIndex(MovieContract.MovieEntry.MOVIE_TITLE);
+        final int titleColId = mCursor.getColumnIndex(MovieContract.MovieEntry.MOVIE_TITLE);
         String title = mCursor.getString(titleColId);
 
         // get favorite state and set display
@@ -93,17 +97,42 @@ public final class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieV
         }
 
 
-
+        holder.favoriteCheckBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int idCol = 0;
+                String id = null;
+                if (holder.favoriteCheckBox.isChecked()) {
+                    mCursor.moveToPosition(holder.getAdapterPosition());
+                    mTitleFav = mCursor.getString(titleColId);
+                    idCol = mCursor.getColumnIndex(MovieContract.MovieEntry._ID);
+                    id = mCursor.getString(idCol);
+                    ContentValues cv = new ContentValues();
+                    cv.put(MovieContract.MovieEntry.MOVIE_FAVORITE, 1); // TODO: fix
+                    FavoriteUtils.addFavorite(mContext, mTitleFav, id, cv);
+                } else {
+                    mCursor.moveToPosition(holder.getAdapterPosition());
+                    mTitleFav = mCursor.getString(titleColId);
+                    idCol = mCursor.getColumnIndex(MovieContract.MovieEntry._ID);
+                    id = mCursor.getString(idCol);
+                    try {
+                        ContentValues cv = new ContentValues();
+                        cv.put(MovieContract.MovieEntry.MOVIE_FAVORITE, 0); // TODO: fix
+                        FavoriteUtils.removeFavorite(mContext, mTitleFav, id, cv);
+                    } catch (Exception e) {
+                        Log.e(LOG_TAG, "Movie not in Favorites");
+                    }
+                }
+            }
+        });
     }
 
 
     @Override
     public int getItemCount() {
         if (mCursor == null) {
-//            Log.w(LOG_TAG, "Count = " + 0);
             return 0;
         }
-//        Log.w(LOG_TAG, "Count = " + sCursor.getCount());
         return mCursor.getCount();
     }
 
@@ -112,28 +141,34 @@ public final class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieV
         mCursor = cursor;
         notifyDataSetChanged();
     }
-
-    public String getSelectedMovieLocalID(int cursorIndexNum){
+    public String getSelectedMovieLocalID(int cursorIndexNum) {
         mCursor.moveToPosition(cursorIndexNum);
         int idCol = mCursor.getColumnIndex(MovieContract.MovieEntry._ID);
         return mCursor.getString(idCol);
     }
-    public String getSelectedMovieTitle(int cursorIndexNum){
+
+    public String getSelectedMovieSourceID(int cursorIndexNum) {
+        mCursor.moveToPosition(cursorIndexNum);
+        int idCol = mCursor.getColumnIndex(MovieContract.MovieEntry.MOVIE_TMDB_ID);
+        return mCursor.getString(idCol);
+    }
+
+    public String getSelectedMovieTitle(int cursorIndexNum) {
         mCursor.moveToPosition(cursorIndexNum);
         int titleCol = mCursor.getColumnIndex(MovieContract.MovieEntry.MOVIE_TITLE);
         return mCursor.getString(titleCol);
     }
 
-    public class MovieViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class MovieViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         ImageView poster;
-        CheckBox favoriteCheckBox;
+        ToggleButton favoriteCheckBox;
 
         public MovieViewHolder(View itemView) {
             super(itemView);
 
             poster = (ImageView) itemView.findViewById(R.id.cover_image);
-            favoriteCheckBox = (CheckBox) itemView.findViewById(R.id.favorite_button);
+            favoriteCheckBox = (ToggleButton) itemView.findViewById(R.id.favorite_button);
             itemView.setOnClickListener(this);
         }
 

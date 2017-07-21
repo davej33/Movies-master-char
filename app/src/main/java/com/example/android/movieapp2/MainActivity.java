@@ -1,9 +1,11 @@
 package com.example.android.movieapp2;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -20,22 +22,41 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.example.android.movieapp2.data.MovieContract;
-import com.example.android.movieapp2.sync.SyncUtils;
+import com.example.android.movieapp2.utils.SyncUtils;
+import com.example.android.movieapp2.utils.JsonUtils;
+import com.example.android.movieapp2.utils.NetworkUtils;
+
+import org.json.JSONException;
+
+import java.util.ArrayList;
 
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>,
         MovieAdapter.ListItemClickListener {
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
+    private static final String POPULAR_VALUE = "popularity.desc";
+    private static final String RATING_VALUE = "vote_average.desc";
+    private static final String FAVORITES_VALUE = "favorites";
+    private static final String FAVORITED_DB_VALUE = "1";
+    private static final String FETCH_TRAILERS_VALUE = "trailers";
+    private static final String FETCH_REVIEWS_VALUE = "reviews";
+
     private MovieAdapter mAdapter;
     private static final int LANDSCAPE_COLUMNS = 3;
     private static final int PORTRAIT_COLUMNS = 2;
-    private static final int LOADER_ID = 300;
+    private static final int LOADER_ID = 100;
     private boolean mSortPrefChanged = false;
     private static boolean mFavoriteChanged = false;
-    private String mSortValue;
     private SharedPreferences.OnSharedPreferenceChangeListener mListener;
+    private SharedPreferences mPref;
+    private String mSortValue = "popularity.desc";
+
+    private ContentValues[] cvArray;
     // TODO: fetch more results when scrolled to end
 
     @Override
@@ -58,7 +79,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         if (SyncUtils.isInitialized()) {
             displayData();
         } else {
-            SyncUtils.initialize(this);
+            NetworkUtils.initRequestQueue(this);
+            fetchMovies();
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -81,36 +103,94 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     private void setupSharedPreferences() {
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-        mListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+        mPref = PreferenceManager.getDefaultSharedPreferences(this);
+        mListener = new SharedPreferences.OnSharedPreferenceChangeListener() { // instantiated listener to try to prevent garbage collection
+            // because listener not being triggered after first change of preference. Still doesn't, so added mSortPrefChanged and mFavoriteChanged
+            // to provide listening function.
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-                Log.i(LOG_TAG,"MA-SP run");
-                // attempt to compare default value to current value to determine if SP actually changed.
+                Log.i(LOG_TAG, "MA-SP run");
+                // compare default value to current value to determine if SP actually changed. This is to prevent
+                // the syncImmediately method from running when calling Settings for first time
                 if (key.equals(getString(R.string.pref_sort_key))) {
                     String prefValue = sharedPreferences.getString(key, null); // get value of changed SP
-                    Log.i(LOG_TAG, "MA-SP value: " + prefValue);
-                    if (prefValue.equals(mSortValue)) {
-                        Log.w(LOG_TAG, "Listener run. SP-Unchanged");
-                    } else {
-                        Log.i(LOG_TAG, "MA-SP sort changed: " + prefValue);
+                    if (prefValue != null && !prefValue.equals(mSortValue)) {
                         mSortValue = prefValue;
                         mSortPrefChanged = true; // set test variable to true so activity will sync onStart()
                     }
+
                 } else {
-                    Log.i(LOG_TAG, "MA-SP key changed %%%%%%%%%%%%: " + key);
                     mFavoriteChanged = true;
                 }
             }
         };
-        pref.registerOnSharedPreferenceChangeListener(mListener);
-        if(SharedPreferences.OnSharedPreferenceChangeListener.class.getSimpleName() == null) {
-            Log.i(LOG_TAG, "Listener null");
-        } else {
-            Log.i(LOG_TAG, "Listener not null" + SharedPreferences.OnSharedPreferenceChangeListener.class.getSimpleName());
+        mPref.registerOnSharedPreferenceChangeListener(mListener);
+    }
+
+    @Override
+    protected void onStart() {
+
+        // if sort pref has changed, take action on new sort value
+        if (mSortPrefChanged) {
+            fetchMovies();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    displayData();
+                }
+            }, 1000);
         }
-        mSortValue = pref.getString(getString(R.string.pref_sort_key), getString(R.string.pref_sort_default)); // set current value of sort pref
-        Log.i(LOG_TAG, "setupSP() mSortValue = " + mSortValue);
+
+        // refresh display data if SP-Favorites changed
+        if (mFavoriteChanged) {
+            displayData();
+            mFavoriteChanged = false;
+        }
+        super.onStart();
+    }
+
+    private void fetchMovies() {
+        switch (mSortValue) {
+            case POPULAR_VALUE:
+            case RATING_VALUE:
+                StringRequest dataRequest = new StringRequest(NetworkUtils.buildURL(this), new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.i(LOG_TAG, "### respsonse ###: " + response);
+
+                        // parse
+                        ContentValues[] cv = null;
+                        try {
+                            cv = JsonUtils.parseJson(response, mSortValue);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        // insert into db
+                        int rowsInserted;
+                        if (cv != null) {
+                            try {
+                                rowsInserted = getContentResolver().bulkInsert(MovieContract.MovieEntry.MOVIE_TABLE_URI, cv);
+                                Log.i(LOG_TAG, "rows inserted: " + rowsInserted);
+                            } catch (SQLException e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            Log.i(LOG_TAG, "ContentValues[] is null");
+                        }
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        error.printStackTrace();
+                    }
+                });
+                NetworkUtils.addToRequestQueue(dataRequest, mSortValue);
+                break;
+            default:
+                Log.i(LOG_TAG, "fetchMovies() no match");
+
+        }
     }
 
     private void displayData() {
@@ -134,22 +214,78 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             case R.id.action_settings:
                 startActivity(new Intent(this, SettingsActivity.class));
                 return true;
+            case R.id.check_fav_db:
+                checkFavDB();
+                return true;
+            case R.id.action_refresh:
+                displayData();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
+    void checkFavDB() {
+        String selection = MovieContract.MovieEntry.MOVIE_FAVORITE + "=?";
+        String[] selectionArgs = {"1"};
+        Cursor c = this.getContentResolver().query(MovieContract.MovieEntry.MOVIE_TABLE_URI, null, selection, selectionArgs, null);
+        if (c != null && c.getCount() > 0) {
+            c.moveToFirst();
+            Log.i(LOG_TAG, "Cursor count: " + c.getCount());
+
+            do {
+                int colId = c.getColumnIndex(MovieContract.MovieEntry._ID);
+                String id = c.getString(colId);
+                int col = c.getColumnIndex(MovieContract.MovieEntry.MOVIE_TITLE);
+                String title = c.getString(col);
+                int col2 = c.getColumnIndex(MovieContract.MovieEntry.MOVIE_POSTER);
+                String p = c.getString(col2);
+                int col3 = c.getColumnIndex(MovieContract.MovieEntry.MOVIE_RATING);
+                String r = c.getString(col3);
+                int col4 = c.getColumnIndex(MovieContract.MovieEntry.MOVIE_RELEASE_DATE);
+                String d = c.getString(col4);
+                int col5 = c.getColumnIndex(MovieContract.MovieEntry.MOVIE_FAVORITE);
+                String f = c.getString(col5);
+                int col6 = c.getColumnIndex(MovieContract.MovieEntry.MOVIE_TRAILER_1);
+                String t1 = c.getString(col6);
+                int col7 = c.getColumnIndex(MovieContract.MovieEntry.MOVIE_TRAILER_2);
+                String t2 = c.getString(col7);
+                int col8 = c.getColumnIndex(MovieContract.MovieEntry.MOVIE_TRAILER_3);
+                String t3 = c.getString(col8);
+                Log.i(LOG_TAG, "Favorite ID/Title/poster/rating/date/FAV/1/2/3: " + id + " / " + title + " / " + p + " / " + r + " / " + d + " / " + f + " / " + t1 + " / " + t2 + " / " + t3);
+            } while (c.moveToNext());
+            c.close();
+        } else {
+            Toast.makeText(this, "No Favorited Movies", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new CursorLoader(this,
-                MovieContract.MovieEntry.MOVIE_TABLE_URI, null, null, null, null);
+        String[] projection = {MovieContract.MovieEntry._ID, MovieContract.MovieEntry.MOVIE_TITLE, MovieContract.MovieEntry.MOVIE_POSTER, MovieContract.MovieEntry.MOVIE_FAVORITE};
+
+        switch (mSortValue) {
+            case RATING_VALUE:
+                String ratingSortOrder = MovieContract.MovieEntry.MOVIE_RATING + " DESC";
+                return new CursorLoader(this,
+                        MovieContract.MovieEntry.MOVIE_TABLE_URI, projection, null, null, ratingSortOrder);
+            case POPULAR_VALUE:
+                String popSortOrder = MovieContract.MovieEntry.MOVIE_POPULARITY + " DESC";
+                return new CursorLoader(this,
+                        MovieContract.MovieEntry.MOVIE_TABLE_URI, projection, null, null, popSortOrder);
+            case FAVORITES_VALUE:
+                String selection = MovieContract.MovieEntry.MOVIE_FAVORITE + "=?";
+                String[] selectionArgs = {FAVORITED_DB_VALUE};
+                return new CursorLoader(this, MovieContract.MovieEntry.MOVIE_TABLE_URI, projection, selection, selectionArgs, null);
+            default:
+                return null;
+        }
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         data.moveToFirst();
         mAdapter.swapCursor(data);
-
     }
 
     @Override
@@ -180,7 +316,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     protected void onPause() {
         super.onPause();
-        Log.i(LOG_TAG,"onPause run");
+        Log.i(LOG_TAG, "onPause run");
     }
 
     public static void setmFavoriteChanged(boolean b) {
@@ -198,26 +334,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 //
 //    }
 
-    @Override
-    protected void onStart() {
-        if(SharedPreferences.OnSharedPreferenceChangeListener.class.getSimpleName() == null) Log.i(LOG_TAG, "Listener null");
-        if (mSortPrefChanged) {
-            SyncUtils.syncImmediately(this);
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    displayData();
-                }
-            }, 1000);
-
-            mSortPrefChanged = false;
-        }
-        if (mFavoriteChanged) {
-            displayData();
-            mFavoriteChanged = false;
-        }
-        super.onStart();
-    }
 
 //    @Override
 //    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
@@ -247,12 +363,74 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public void onListItemClick(int clickedItemIndex) {
-        Intent intent = new Intent(this, DetailsActivity.class);
         String localID = mAdapter.getSelectedMovieLocalID(clickedItemIndex);
-        String sourceID = mAdapter.getSelectedMovieTitle(clickedItemIndex);
+        String sourceID = mAdapter.getSelectedMovieSourceID(clickedItemIndex);
+        String title = mAdapter.getSelectedMovieTitle(clickedItemIndex);
+
+        fetchMovieDetails(localID, sourceID);
+        Intent intent = new Intent(this, DetailsActivity.class);
         intent.putExtra(getString(R.string.local_id_key), localID);
-        intent.putExtra(getString(R.string.movie_title_key), sourceID);
+        intent.putExtra(getString(R.string.movie_title_key), title);
         startActivity(intent);
+    }
+
+    private void fetchMovieDetails(final String dbRowID, String sourceID) {
+
+
+        StringRequest detailRequest = new StringRequest(NetworkUtils.buildMovieDetailUrl(this, sourceID), new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                ContentValues[] cv = new ContentValues[1];
+                try {
+                    cv = JsonUtils.parseJson(response, FETCH_TRAILERS_VALUE);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+//                Uri updateUri = Uri.parse(MovieContract.MovieEntry.MOVIE_TABLE_URI + "/" + dbRowID);
+//                int rowUpdated;
+//                if (cv != null && cv.length > 0) {
+//                    try {
+//                        rowUpdated = getContentResolver().update(updateUri, cv[0], null, null);
+//                        Log.i(LOG_TAG, "Trailers update successful: " + rowUpdated);
+//                    } catch (SQLException e) {
+//                        Log.e(LOG_TAG, "SQL update error");
+//                    }
+//                } else {
+//                    Log.e(LOG_TAG, "No CV for trailer");
+//                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(LOG_TAG, "ErrorListner error" + error);
+            }
+        });
+
+        NetworkUtils.addToRequestQueue(detailRequest, FETCH_TRAILERS_VALUE);
+
+        StringRequest reviewRequest = new StringRequest(NetworkUtils.buildReviewUrlString(this, sourceID), new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                ContentValues[] cv = null;
+                try {
+                    cv = JsonUtils.parseJson(response, FETCH_REVIEWS_VALUE);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                Log.i(LOG_TAG, "Review Size: " + cv.length);
+                DetailFragment.setReviewArray(cv);
+
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(LOG_TAG, "Error fetching reviews" + error);
+            }
+        });
+
+        NetworkUtils.addToRequestQueue(reviewRequest, FETCH_REVIEWS_VALUE);
     }
 
 
