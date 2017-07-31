@@ -1,12 +1,12 @@
 package com.example.android.movieapp2;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.SQLException;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.LoaderManager;
@@ -22,17 +22,20 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkError;
+import com.android.volley.NoConnectionError;
+import com.android.volley.ParseError;
 import com.android.volley.Response;
+import com.android.volley.ServerError;
+import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.example.android.movieapp2.data.MovieContract;
-import com.example.android.movieapp2.utils.SyncUtils;
 import com.example.android.movieapp2.utils.JsonUtils;
 import com.example.android.movieapp2.utils.NetworkUtils;
 
 import org.json.JSONException;
-
-import java.util.ArrayList;
 
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>,
@@ -52,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private static final int LOADER_ID = 100;
     private boolean mSortPrefChanged = false;
     private static boolean mFavoriteChanged = false;
+    private static boolean sIsInitialed;
     private SharedPreferences.OnSharedPreferenceChangeListener mListener;
     private SharedPreferences mPref;
     private String mSortValue = "popularity.desc";
@@ -76,8 +80,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         // setup shared preferences
         setupSharedPreferences();
 
+
         // intitiate and/or display data
-        if (SyncUtils.isInitialized()) {
+        if (sIsInitialed) {
             displayData();
         } else {
             NetworkUtils.initRequestQueue(this);
@@ -166,7 +171,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        Log.e(LOG_TAG, "Query CV size: " + cv.length);
+
                         int rowsInserted;
                         try{
                             rowsInserted = getContentResolver().bulkInsert(MovieContract.MovieEntry.MOVIE_TABLE_URI, cv);
@@ -178,6 +183,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        checkVolleyError(error);
                         error.printStackTrace();
                     }
                 });
@@ -387,7 +393,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e(LOG_TAG, "ErrorListner error" + error);
+                checkVolleyError(error);
+                Log.e(LOG_TAG, "ErrorListener error" + error);
             }
         });
 
@@ -410,6 +417,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                checkVolleyError(error);
                 Log.e(LOG_TAG, "Error fetching reviews" + error);
             }
         });
@@ -418,5 +426,24 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     }
 
+    public static void setDbIsInitialized(boolean b){
+        sIsInitialed = b;
+    }
+
+
+    private void checkVolleyError(VolleyError error){
+        if (error instanceof TimeoutError || error instanceof NoConnectionError) {
+            Toast.makeText(getApplicationContext(), "No Network Connection", Toast.LENGTH_SHORT).show();
+
+        } else if (error instanceof AuthFailureError) {
+            Toast.makeText(getApplicationContext(), "Authentication Error!", Toast.LENGTH_SHORT).show();
+        } else if (error instanceof ServerError) {
+            Toast.makeText(getApplicationContext(), "Server Side Error!", Toast.LENGTH_SHORT).show();
+        } else if (error instanceof NetworkError) {
+            Toast.makeText(getApplicationContext(), "Network Error!", Toast.LENGTH_SHORT).show();
+        } else if (error instanceof ParseError) {
+            Toast.makeText(getApplicationContext(), "Parse Error!", Toast.LENGTH_SHORT).show();
+        }
+    }
 
 }
