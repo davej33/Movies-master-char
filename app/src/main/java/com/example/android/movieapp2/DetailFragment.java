@@ -19,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -84,6 +85,12 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     ImageView mTrailer3Image;
     @BindView(R.id.reviews_view)
     RecyclerView mReviewsRecyclerView;
+    @BindView(R.id.noReviewsImage)
+    ImageView mNoReviewImage;
+    @BindView(R.id.noReviewsImageBackground)
+    ImageView mNoReviewImageBackground;
+    @BindView(R.id.horizontalScrollView)
+    HorizontalScrollView mTrailerScrollView;
 
     // Trailer vars
     private static ArrayList sTrailerList;
@@ -108,9 +115,6 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     public DetailFragment() {
         // Required empty public constructor
     }
-
-
-
 
 
     private static void buildTrailerUrls() {
@@ -153,7 +157,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     }
 
     public static void setReviewList(ContentValues[] reviewList) {
-       sReviewArray = reviewList;
+        sReviewArray = reviewList;
     }
 
 
@@ -205,10 +209,12 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         View view = inflater.inflate(R.layout.fragment_movie_detail, container, false); // inflate detail view
         ButterKnife.bind(this, view);
 
+        // set default review and trailer view visibilities
+        setViewDefaults();
+
         // setup reviews recyclerview
         mReviewsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mReviewAdapter = new ReviewAdapter();
-
         mReviewsRecyclerView.setHasFixedSize(true);
 
         // clear image views
@@ -221,21 +227,31 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             @Override
             public void run() {
                 mReviewsRecyclerView.setAdapter(mReviewAdapter);
-                if(mReviewAdapter.getItemCount() == 0) Log.i(LOG_TAG, "No reviews");
+                if (mReviewAdapter.getItemCount() == 0) {
+                    mNoReviewImage.setVisibility(View.VISIBLE);
+                    mNoReviewImageBackground.setVisibility(View.VISIBLE);
+                    mReviewsRecyclerView.setVisibility(View.INVISIBLE);
+                    Log.i(LOG_TAG, "No reviews");
+                }
+
+
                 // if no trailers, show no trailer image
 //                Log.i(LOG_TAG, "trailer size: " + sTrailerList.size());
                 if (trailer1_video_url.equals("")) {
                     mTrailer1Image.setImageResource(R.drawable.no_video_img);
                 } else {
+
                     // for each trailer, set image else do not show image view
-                        Picasso.with(getContext())
-                                .load(trailer1_thumb_url)
-                                .error(R.drawable.error)
-                                .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
-                                .placeholder(R.drawable.detail_imageview_clear)
-                                .centerCrop()
-                                .resize(400, 300)
-                                .into(mTrailer1Image);
+                    Picasso.with(getContext())
+                            .load(trailer1_thumb_url)
+                            .error(R.drawable.error)
+                            .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
+                            .placeholder(R.drawable.detail_imageview_clear)
+                            .centerCrop()
+                            .resize(400, 300)
+                            .into(mTrailer1Image);
+
+                    mTrailerScrollView.setBackgroundColor(getResources().getColor(R.color.colorBlackBackground));
                 }
 
                 if (!trailer2_video_url.equals("")) {
@@ -263,6 +279,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
             }
         }, 1000);
+
 
         // set onClickListeners
         mTrailer1Image.setOnClickListener(new View.OnClickListener() {
@@ -314,6 +331,16 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         return view;
     }
 
+    private void setViewDefaults() {
+        mTrailerScrollView.setBackgroundColor(getResources().getColor(R.color.colorDetailsBackground));
+        if (mNoReviewImage.getVisibility() == View.VISIBLE)
+            mNoReviewImage.setVisibility(View.INVISIBLE);
+        if (mNoReviewImageBackground.getVisibility() == View.VISIBLE)
+            mNoReviewImageBackground.setVisibility(View.INVISIBLE);
+        if (mReviewsRecyclerView.getVisibility() == View.INVISIBLE)
+            mReviewsRecyclerView.setVisibility(View.VISIBLE);
+    }
+
 
     // initialize or restart loader
     private void runLoader() {
@@ -359,9 +386,9 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        data.moveToFirst();
-//        mCursor = data;
+        Log.i(LOG_TAG, "data count: " + data.getCount());
 
+        data.moveToFirst();
         // title
         mTitleV.setText(mTitle);
 
@@ -399,6 +426,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
                 .placeholder(R.drawable.placeholder_detail_view)
                 .centerCrop()
                 .into(mPosterV);
+
     }
 
     @Override
@@ -410,7 +438,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     public void onDestroyView() {
         super.onDestroyView();
 
-        Log.i(LOG_TAG,"onDestroy run");
+        Log.i(LOG_TAG, "onDestroy run");
     }
 
     @Override

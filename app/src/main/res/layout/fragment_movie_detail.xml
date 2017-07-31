@@ -40,13 +40,13 @@
         android:id="@+id/release_year"
         android:layout_width="43dp"
         android:layout_height="15dp"
+        android:layout_marginTop="8dp"
         android:textColor="@color/colorDetailText"
         app:layout_constraintHorizontal_bias="0.481"
         app:layout_constraintLeft_toRightOf="@+id/poster_detail_view"
         app:layout_constraintRight_toRightOf="parent"
-        tools:text="(2017)"
         app:layout_constraintTop_toBottomOf="@+id/ratingBar"
-        android:layout_marginTop="8dp" />
+        tools:text="(2017)" />
 
     <RatingBar
         android:id="@+id/ratingBar"
@@ -67,14 +67,14 @@
         android:layout_width="0dp"
         android:layout_height="130dp"
         android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
         android:scrollbars="vertical"
         app:layout_constraintBottom_toBottomOf="@+id/poster_detail_view"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/favorite_checkbox_view"
         app:layout_constraintLeft_toRightOf="@+id/poster_detail_view"
-        android:layout_marginLeft="8dp">
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/favorite_checkbox_view">
 
         <TextView
             android:id="@+id/plot"
@@ -157,6 +157,38 @@
         </LinearLayout>
     </HorizontalScrollView>
 
+    <ImageView
+        android:id="@+id/noReviewsImageBackground"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp"
+        android:background="#000"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/horizontalScrollView"
+        app:layout_constraintVertical_bias="0.666" />
+
+    <ImageView
+        android:id="@+id/noReviewsImage"
+        android:layout_width="136dp"
+        android:layout_height="100dp"
+        android:layout_marginBottom="0dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginTop="0dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/horizontalScrollView"
+        app:srcCompat="@drawable/no_reviews_img" />
+
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/reviews_view"
@@ -164,19 +196,17 @@
         android:layout_height="0dp"
         android:layout_marginEnd="8dp"
         android:layout_marginLeft="8dp"
-
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-
         android:layout_weight="0.46"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/horizontalScrollView" />
-
-
+        app:layout_constraintTop_toBottomOf="@+id/horizontalScrollView"
+        app:layout_constraintVertical_bias="0.0" />
 
 
 </android.support.constraint.ConstraintLayout>
