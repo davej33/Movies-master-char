@@ -43,5 +43,6 @@
     <string name="trailer_img_url_a">https://img.youtube.com/vi/</string>
     <string name="trailer_img_url_b">/0.jpg</string>
     <string name="trailer_url">https://www.youtube.com/watch?v=</string>
+    <string name="trailer_list_key">trailer_list_key</string>
 
 </resources>

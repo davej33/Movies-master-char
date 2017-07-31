@@ -56,7 +56,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private SharedPreferences mPref;
     private String mSortValue = "popularity.desc";
 
-    private ContentValues[] cvArray;
+    private ContentValues[] mCvTrailers;
+    private ContentValues[] mCvReviews;
     // TODO: fetch more results when scrolled to end
 
     @Override
@@ -165,19 +166,14 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-
-                        // insert into db
+                        Log.e(LOG_TAG, "Query CV size: " + cv.length);
                         int rowsInserted;
-                        if (cv != null) {
-                            try {
-                                rowsInserted = getContentResolver().bulkInsert(MovieContract.MovieEntry.MOVIE_TABLE_URI, cv);
-                                Log.i(LOG_TAG, "rows inserted: " + rowsInserted);
-                            } catch (SQLException e) {
-                                e.printStackTrace();
-                            }
-                        } else {
-                            Log.i(LOG_TAG, "ContentValues[] is null");
+                        try{
+                            rowsInserted = getContentResolver().bulkInsert(MovieContract.MovieEntry.MOVIE_TABLE_URI, cv);
+                        } catch (SQLException e){
+                            Log.e(LOG_TAG, "SQL builInsert error: " + e);
                         }
+
                     }
                 }, new Response.ErrorListener() {
                     @Override
@@ -363,21 +359,21 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public void onListItemClick(int clickedItemIndex) {
-        String localID = mAdapter.getSelectedMovieLocalID(clickedItemIndex);
-        String sourceID = mAdapter.getSelectedMovieSourceID(clickedItemIndex);
+        String localDbRowID = mAdapter.getSelectedMovieLocalID(clickedItemIndex);
+        String movieID = mAdapter.getSelectedMovieSourceID(clickedItemIndex);
         String title = mAdapter.getSelectedMovieTitle(clickedItemIndex);
 
-        fetchMovieDetails(localID, sourceID);
+        fetchTrailersAndReviews(movieID);
         Intent intent = new Intent(this, DetailsActivity.class);
-        intent.putExtra(getString(R.string.local_id_key), localID);
+        intent.putExtra(getString(R.string.local_id_key), localDbRowID);
         intent.putExtra(getString(R.string.movie_title_key), title);
         startActivity(intent);
     }
 
-    private void fetchMovieDetails(final String dbRowID, String sourceID) {
+    private void fetchTrailersAndReviews(String movieID) {
 
 
-        StringRequest detailRequest = new StringRequest(NetworkUtils.buildMovieDetailUrl(this, sourceID), new Response.Listener<String>() {
+        StringRequest fetchTrailers = new StringRequest(NetworkUtils.buildMovieDetailUrl(this, movieID), new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 ContentValues[] cv = new ContentValues[1];
@@ -386,19 +382,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
-//                Uri updateUri = Uri.parse(MovieContract.MovieEntry.MOVIE_TABLE_URI + "/" + dbRowID);
-//                int rowUpdated;
-//                if (cv != null && cv.length > 0) {
-//                    try {
-//                        rowUpdated = getContentResolver().update(updateUri, cv[0], null, null);
-//                        Log.i(LOG_TAG, "Trailers update successful: " + rowUpdated);
-//                    } catch (SQLException e) {
-//                        Log.e(LOG_TAG, "SQL update error");
-//                    }
-//                } else {
-//                    Log.e(LOG_TAG, "No CV for trailer");
-//                }
+                mCvTrailers = cv;
             }
         }, new Response.ErrorListener() {
             @Override
@@ -407,9 +391,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             }
         });
 
-        NetworkUtils.addToRequestQueue(detailRequest, FETCH_TRAILERS_VALUE);
+        NetworkUtils.addToRequestQueue(fetchTrailers, FETCH_TRAILERS_VALUE);
 
-        StringRequest reviewRequest = new StringRequest(NetworkUtils.buildReviewUrlString(this, sourceID), new Response.Listener<String>() {
+        StringRequest reviewRequest = new StringRequest(NetworkUtils.buildReviewUrlString(this, movieID), new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 ContentValues[] cv = null;
@@ -418,9 +402,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                Log.i(LOG_TAG, "Review Size: " + cv.length);
-                DetailFragment.setReviewArray(cv);
 
+                mCvReviews = cv;
+                Log.i(LOG_TAG, "Review Size: " + mCvReviews.length);
 
             }
         }, new Response.ErrorListener() {
@@ -431,6 +415,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         });
 
         NetworkUtils.addToRequestQueue(reviewRequest, FETCH_REVIEWS_VALUE);
+
     }
 
 

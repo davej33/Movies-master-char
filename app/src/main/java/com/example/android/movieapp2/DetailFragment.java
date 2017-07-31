@@ -1,10 +1,8 @@
 package com.example.android.movieapp2;
 
-import android.app.ActionBar;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -14,7 +12,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -25,16 +22,15 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.example.android.movieapp2.data.MovieContract;
 import com.example.android.movieapp2.utils.FavoriteUtils;
+import com.example.android.movieapp2.utils.JsonUtils;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -90,7 +86,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     RecyclerView mReviewsRecyclerView;
 
     // Trailer vars
-    private static ArrayList<String> sTrailerList;
+    private static ArrayList sTrailerList;
     private static String trailer1_video_url;
     private static String trailer2_video_url;
     private static String trailer3_video_url;
@@ -104,6 +100,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
     // Review Array
     private static ContentValues[] sReviewArray;
+    private ReviewAdapter mReviewAdapter;
+
 
     private OnFragmentInteractionListener mListener;
 
@@ -111,12 +109,9 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         // Required empty public constructor
     }
 
-    public static void setTrailerArrayList(ArrayList<String> trailerArrayList) {
-        sTrailerList = trailerArrayList;
-        Log.i(LOG_TAG, "setTrailerList count: " + sTrailerList.size());
-        Log.i(LOG_TAG, "setTrailerList arg count: " + trailerArrayList.size());
-        buildTrailerUrls();
-    }
+
+
+
 
     private static void buildTrailerUrls() {
         Log.i(LOG_TAG, "setTrailerList count: " + sTrailerList.size());
@@ -124,17 +119,17 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             switch (i) {
 
                 case 0:
-                    String movieIdAtIndex0 = sTrailerList.get(0);
+                    Object movieIdAtIndex0 = sTrailerList.get(0);
                     trailer1_thumb_url = TRAILER_IMG_URL_A + movieIdAtIndex0 + TRAILER_IMG_URL_B;
                     trailer1_video_url = TRAILER_VIDEO_URL + movieIdAtIndex0;
                     break;
                 case 1:
-                    String movieIdAtIndex1 = sTrailerList.get(1);
+                    Object movieIdAtIndex1 = sTrailerList.get(1);
                     trailer2_thumb_url = TRAILER_IMG_URL_A + movieIdAtIndex1 + TRAILER_IMG_URL_B;
                     trailer2_video_url = TRAILER_VIDEO_URL + movieIdAtIndex1;
                     break;
                 case 2:
-                    String movieIdAtIndex2 = sTrailerList.get(2);
+                    Object movieIdAtIndex2 = sTrailerList.get(2);
                     trailer3_thumb_url = TRAILER_IMG_URL_A + movieIdAtIndex2 + TRAILER_IMG_URL_B;
                     trailer3_video_url = TRAILER_VIDEO_URL + movieIdAtIndex2;
                     break;
@@ -149,6 +144,16 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         trailer2_video_url = "";
         trailer3_thumb_url = "";
         trailer3_video_url = "";
+    }
+
+    public static void setDetailFragTrailerList(ArrayList<String> detailFragTrailerList) {
+        sTrailerList = detailFragTrailerList;
+        clearUrls();
+        buildTrailerUrls();
+    }
+
+    public static void setReviewList(ContentValues[] reviewList) {
+       sReviewArray = reviewList;
     }
 
 
@@ -193,9 +198,6 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         super.onActivityCreated(savedInstanceState);
     }
 
-    public static void setReviewArray(ContentValues[] cvArray) {
-        sReviewArray = cvArray;
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -205,8 +207,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
         // setup reviews recyclerview
         mReviewsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        ReviewAdapter reviewAdapter = new ReviewAdapter(sReviewArray);
-        mReviewsRecyclerView.setAdapter(reviewAdapter);
+        mReviewAdapter = new ReviewAdapter();
+
         mReviewsRecyclerView.setHasFixedSize(true);
 
         // clear image views
@@ -218,9 +220,11 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
+                mReviewsRecyclerView.setAdapter(mReviewAdapter);
+                if(mReviewAdapter.getItemCount() == 0) Log.i(LOG_TAG, "No reviews");
                 // if no trailers, show no trailer image
-                Log.i(LOG_TAG, "trailer size: " + sTrailerList.size());
-                if (trailer1_video_url == null) {
+//                Log.i(LOG_TAG, "trailer size: " + sTrailerList.size());
+                if (trailer1_video_url.equals("")) {
                     mTrailer1Image.setImageResource(R.drawable.no_video_img);
                 } else {
                     // for each trailer, set image else do not show image view
@@ -234,7 +238,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
                                 .into(mTrailer1Image);
                 }
 
-                if (trailer2_video_url != null) {
+                if (!trailer2_video_url.equals("")) {
                     mTrailer2Image.setVisibility(View.VISIBLE);
                     Picasso.with(getContext())
                             .load(trailer2_thumb_url)
@@ -245,7 +249,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
                             .centerCrop()
                             .into(mTrailer2Image);
                 }
-                if (trailer3_video_url != null) {
+                if (!trailer3_video_url.equals("")) {
                     mTrailer3Image.setVisibility(View.VISIBLE);
                     Picasso.with(getContext())
                             .load(trailer3_thumb_url)
@@ -405,6 +409,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+
         Log.i(LOG_TAG,"onDestroy run");
     }
 

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.example.android.movieapp2.DetailFragment;
+import com.example.android.movieapp2.ReviewAdapter;
 import com.example.android.movieapp2.data.MovieContract.MovieEntry;
 
 import org.json.JSONArray;
@@ -23,11 +24,14 @@ public final class JsonUtils {
     private static final String RATING_VALUE = "vote_average.desc";
     private static final String FETCH_TRAILERS_VALUE = "trailers";
     private static final String FETCH_REVIEWS_VALUE = "reviews";
+    private static String SEARCH_TYPE;
 
     private static ArrayList<String> sTrailerList = new ArrayList<>();
+    private static ContentValues[] sCvReview;
 
 
     public static ContentValues[] parseJson(String bufferedString, String type) throws JSONException {
+
 
         // Query Api keys
         final String TITLE_KEY = "title";
@@ -45,6 +49,9 @@ public final class JsonUtils {
         final String VIDEO_ID = "key";
         final String TRAILER_VALUE = "Trailer";
         final String TYPE_KEY = "type";
+
+        // set search type class var
+        SEARCH_TYPE = type;
 
         // create json object and array from buffered stream
         JSONObject root = new JSONObject(bufferedString);
@@ -81,7 +88,7 @@ public final class JsonUtils {
                     contentValues[i] = cv; // add ContentValues to ContentValues[]
                     break;
                 case FETCH_TRAILERS_VALUE:
-                    Log.i("JsonUtils","trailer fetch run check: ");
+                    Log.i("JsonUtils", "trailer fetch run check: ");
                     String videoType = element.getString(TYPE_KEY); // get the String value at key "type"
                     if (videoType.equals(TRAILER_VALUE)) { // if value match "Trailer"
                         String videoID = element.getString(VIDEO_ID); // get the youtube trailer id
@@ -99,18 +106,26 @@ public final class JsonUtils {
                     contentValues[i] = cvReview;
 
             }
+
         }
 
-        DetailFragment.setTrailerArrayList(sTrailerList);
-        Log.i("JsonUtils","trailerList count: " + sTrailerList.size());
-
         // return ContentValues[] if array list is empty
-        if (sTrailerList.size() == 0) {
+        if (SEARCH_TYPE.equals(POPULAR_VALUE) || SEARCH_TYPE.equals(RATING_VALUE)) {
+            return contentValues;
+        } else if (SEARCH_TYPE.equals(FETCH_REVIEWS_VALUE)) {
+            ReviewAdapter.setReviewArray(contentValues);
             return contentValues;
         } else {
+            DetailFragment.setDetailFragTrailerList(sTrailerList);
             return convertArrayListToContentValue(); // convert array list to a ContentValue[] and return
         }
 
+
+}
+
+    public static ArrayList getTrailers() {
+        Log.i("JsonUtils", "trailerList count: " + sTrailerList.size());
+        return sTrailerList;
     }
 
     private static ContentValues[] convertArrayListToContentValue() {
@@ -139,7 +154,12 @@ public final class JsonUtils {
     }
 
     private static void addIdToArrayList(String videoID) {
+        Log.i("JsonUtils", "Added trailer ID to list: " + videoID);
         sTrailerList.add(videoID);
+    }
+
+    public static ContentValues[] getReviews() {
+        return sCvReview;
     }
 }
 
