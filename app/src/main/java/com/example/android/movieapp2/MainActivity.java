@@ -1,12 +1,12 @@
 package com.example.android.movieapp2;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.SQLException;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.LoaderManager;
@@ -22,17 +22,20 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkError;
+import com.android.volley.NoConnectionError;
+import com.android.volley.ParseError;
 import com.android.volley.Response;
+import com.android.volley.ServerError;
+import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.example.android.movieapp2.data.MovieContract;
-import com.example.android.movieapp2.utils.SyncUtils;
 import com.example.android.movieapp2.utils.JsonUtils;
 import com.example.android.movieapp2.utils.NetworkUtils;
 
 import org.json.JSONException;
-
-import java.util.ArrayList;
 
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>,
@@ -52,11 +55,13 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private static final int LOADER_ID = 100;
     private boolean mSortPrefChanged = false;
     private static boolean mFavoriteChanged = false;
+    private static boolean sIsInitialed;
     private SharedPreferences.OnSharedPreferenceChangeListener mListener;
     private SharedPreferences mPref;
     private String mSortValue = "popularity.desc";
 
-    private ContentValues[] cvArray;
+    private ContentValues[] mCvTrailers;
+    private ContentValues[] mCvReviews;
     // TODO: fetch more results when scrolled to end
 
     @Override
@@ -75,8 +80,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         // setup shared preferences
         setupSharedPreferences();
 
+
         // intitiate and/or display data
-        if (SyncUtils.isInitialized()) {
+        if (sIsInitialed) {
             displayData();
         } else {
             NetworkUtils.initRequestQueue(this);
@@ -166,22 +172,18 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                             e.printStackTrace();
                         }
 
-                        // insert into db
                         int rowsInserted;
-                        if (cv != null) {
-                            try {
-                                rowsInserted = getContentResolver().bulkInsert(MovieContract.MovieEntry.MOVIE_TABLE_URI, cv);
-                                Log.i(LOG_TAG, "rows inserted: " + rowsInserted);
-                            } catch (SQLException e) {
-                                e.printStackTrace();
-                            }
-                        } else {
-                            Log.i(LOG_TAG, "ContentValues[] is null");
+                        try{
+                            rowsInserted = getContentResolver().bulkInsert(MovieContract.MovieEntry.MOVIE_TABLE_URI, cv);
+                        } catch (SQLException e){
+                            Log.e(LOG_TAG, "SQL builInsert error: " + e);
                         }
+
                     }
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        checkVolleyError(error);
                         error.printStackTrace();
                     }
                 });
@@ -363,21 +365,21 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public void onListItemClick(int clickedItemIndex) {
-        String localID = mAdapter.getSelectedMovieLocalID(clickedItemIndex);
-        String sourceID = mAdapter.getSelectedMovieSourceID(clickedItemIndex);
+        String localDbRowID = mAdapter.getSelectedMovieLocalID(clickedItemIndex);
+        String movieID = mAdapter.getSelectedMovieSourceID(clickedItemIndex);
         String title = mAdapter.getSelectedMovieTitle(clickedItemIndex);
 
-        fetchMovieDetails(localID, sourceID);
+        fetchTrailersAndReviews(movieID);
         Intent intent = new Intent(this, DetailsActivity.class);
-        intent.putExtra(getString(R.string.local_id_key), localID);
+        intent.putExtra(getString(R.string.local_id_key), localDbRowID);
         intent.putExtra(getString(R.string.movie_title_key), title);
         startActivity(intent);
     }
 
-    private void fetchMovieDetails(final String dbRowID, String sourceID) {
+    private void fetchTrailersAndReviews(String movieID) {
 
 
-        StringRequest detailRequest = new StringRequest(NetworkUtils.buildMovieDetailUrl(this, sourceID), new Response.Listener<String>() {
+        StringRequest fetchTrailers = new StringRequest(NetworkUtils.buildMovieDetailUrl(this, movieID), new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 ContentValues[] cv = new ContentValues[1];
@@ -386,30 +388,19 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
-//                Uri updateUri = Uri.parse(MovieContract.MovieEntry.MOVIE_TABLE_URI + "/" + dbRowID);
-//                int rowUpdated;
-//                if (cv != null && cv.length > 0) {
-//                    try {
-//                        rowUpdated = getContentResolver().update(updateUri, cv[0], null, null);
-//                        Log.i(LOG_TAG, "Trailers update successful: " + rowUpdated);
-//                    } catch (SQLException e) {
-//                        Log.e(LOG_TAG, "SQL update error");
-//                    }
-//                } else {
-//                    Log.e(LOG_TAG, "No CV for trailer");
-//                }
+                mCvTrailers = cv;
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e(LOG_TAG, "ErrorListner error" + error);
+                checkVolleyError(error);
+                Log.e(LOG_TAG, "ErrorListener error" + error);
             }
         });
 
-        NetworkUtils.addToRequestQueue(detailRequest, FETCH_TRAILERS_VALUE);
+        NetworkUtils.addToRequestQueue(fetchTrailers, FETCH_TRAILERS_VALUE);
 
-        StringRequest reviewRequest = new StringRequest(NetworkUtils.buildReviewUrlString(this, sourceID), new Response.Listener<String>() {
+        StringRequest reviewRequest = new StringRequest(NetworkUtils.buildReviewUrlString(this, movieID), new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 ContentValues[] cv = null;
@@ -418,20 +409,41 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                Log.i(LOG_TAG, "Review Size: " + cv.length);
-                DetailFragment.setReviewArray(cv);
 
+                mCvReviews = cv;
+                Log.i(LOG_TAG, "Review Size: " + mCvReviews.length);
 
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                checkVolleyError(error);
                 Log.e(LOG_TAG, "Error fetching reviews" + error);
             }
         });
 
         NetworkUtils.addToRequestQueue(reviewRequest, FETCH_REVIEWS_VALUE);
+
     }
 
+    public static void setDbIsInitialized(boolean b){
+        sIsInitialed = b;
+    }
+
+
+    private void checkVolleyError(VolleyError error){
+        if (error instanceof TimeoutError || error instanceof NoConnectionError) {
+            Toast.makeText(getApplicationContext(), "No Network Connection", Toast.LENGTH_SHORT).show();
+
+        } else if (error instanceof AuthFailureError) {
+            Toast.makeText(getApplicationContext(), "Authentication Error!", Toast.LENGTH_SHORT).show();
+        } else if (error instanceof ServerError) {
+            Toast.makeText(getApplicationContext(), "Server Side Error!", Toast.LENGTH_SHORT).show();
+        } else if (error instanceof NetworkError) {
+            Toast.makeText(getApplicationContext(), "Network Error!", Toast.LENGTH_SHORT).show();
+        } else if (error instanceof ParseError) {
+            Toast.makeText(getApplicationContext(), "Parse Error!", Toast.LENGTH_SHORT).show();
+        }
+    }
 
 }

@@ -4,5 +4,7 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#f5ff40</color>
     <color name="colorDetailsBackground">#d5dff4</color>
+    <color name="colorReviewBackground">#edf3ff</color>
     <color name="colorDetailText">#000</color>
+    <color name="colorBlackBackground">#000</color>
 </resources>

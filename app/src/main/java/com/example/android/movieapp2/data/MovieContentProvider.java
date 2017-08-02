@@ -12,6 +12,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.example.android.movieapp2.DetailFragment;
+import com.example.android.movieapp2.MainActivity;
+
 /**
  * Created by dnj on 6/19/17.
  */
@@ -58,6 +61,7 @@ public final class MovieContentProvider extends ContentProvider {
                         if (insertCheck != -1) rowsInserted++;
                     }
                     db.setTransactionSuccessful();
+                    MainActivity.setDbIsInitialized(true);
                     Log.i(LOG_TAG, "rows inserted %%%%%%% " + rowsInserted);
                 } catch (SQLException e) {
                     Log.e(LOG_TAG, "Bulk insert error: " + e);
