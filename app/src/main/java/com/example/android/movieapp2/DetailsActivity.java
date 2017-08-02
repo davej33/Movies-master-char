@@ -48,9 +48,6 @@ public class DetailsActivity extends AppCompatActivity implements DetailFragment
             case android.R.id.home:
                 NavUtils.navigateUpFromSameTask(this);
                 return true;
-            case R.id.check_fav_db:
-                checkFavDB();
-                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }

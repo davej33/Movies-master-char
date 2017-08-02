@@ -54,8 +54,7 @@ public class NetworkUtils {
         String sort = pref.getString(context.getString(R.string.pref_sort_key), context.getString(R.string.pref_sort_default));
 
         // build URI using sharedPreferences
-        Uri uri = Uri.parse(context.getString(R.string.query_base_url)).buildUpon()
-                .appendQueryParameter(context.getString(R.string.pref_sort_key), sort)
+        Uri uri = Uri.parse(context.getString(R.string.query_base_url) + sort + "?").buildUpon()
                 .appendQueryParameter(context.getString(R.string.api_code_key), BuildConfig.MOVIE_API_KEY)
                 .build();
 

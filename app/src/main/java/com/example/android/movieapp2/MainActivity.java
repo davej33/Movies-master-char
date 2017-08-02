@@ -42,8 +42,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         MovieAdapter.ListItemClickListener {
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
-    private static final String POPULAR_VALUE = "popularity.desc";
-    private static final String RATING_VALUE = "vote_average.desc";
+    private static final String POPULAR_VALUE = "popular";
+    private static final String RATING_VALUE = "top_rated";
     private static final String FAVORITES_VALUE = "favorites";
     private static final String FAVORITED_DB_VALUE = "1";
     private static final String FETCH_TRAILERS_VALUE = "trailers";
@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private static boolean sIsInitialed;
     private SharedPreferences.OnSharedPreferenceChangeListener mListener;
     private SharedPreferences mPref;
-    private String mSortValue = "popularity.desc";
+    private String mSortValue = "popular";
 
     private ContentValues[] mCvTrailers;
     private ContentValues[] mCvReviews;
@@ -162,7 +162,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 StringRequest dataRequest = new StringRequest(NetworkUtils.buildURL(this), new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Log.i(LOG_TAG, "### respsonse ###: " + response);
+                        Log.i(LOG_TAG, "### response ###: " + response);
 
                         // parse
                         ContentValues[] cv = null;
@@ -215,12 +215,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         switch (id) {
             case R.id.action_settings:
                 startActivity(new Intent(this, SettingsActivity.class));
-                return true;
-            case R.id.check_fav_db:
-                checkFavDB();
-                return true;
-            case R.id.action_refresh:
-                displayData();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
