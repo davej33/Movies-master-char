@@ -2,7 +2,7 @@
     <string name="app_name">Movie Boom</string>
     <string name="title_activity_preference">Preferences</string>
     <string name="api_code_key">api_key</string>
-    <string name="query_base_url">https://api.themoviedb.org/3/discover/movie?</string>
+    <string name="query_base_url">https://api.themoviedb.org/3/movie/</string>
     <string name="trailer_base_url">https://api.themoviedb.org/3/movie/</string>
 
     <!-- Strings related to Settings -->
@@ -17,13 +17,13 @@
     <!-- Sort Preference  -->
     <string name="pref_sort_label">Sort By</string>
     <string name="pref_sort_key">sort_by</string>
-    <string name="pref_sort_default">popularity.desc</string>
+    <string name="pref_sort_default">popular</string>
 
     <string name="pref_sort_popularity_label">Popularity</string>
-    <string name="pref_sort_popularity_value">popularity.desc</string>
+    <string name="pref_sort_popularity_value">popular</string>
 
     <string name="pref_sort_rating_label">Highest Rating</string>
-    <string name="pref_sort_rating_value">vote_average.desc</string>
+    <string name="pref_sort_rating_value">top_rated</string>
 
     <string name="pref_sort_fav_label">Favorites</string>
     <string name="pref_sort_fav_value">favorites</string>
@@ -45,7 +45,6 @@
     <string name="trailer_url">https://www.youtube.com/watch?v=</string>
     <string name="trailer_list_key">trailer_list_key</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 
 </resources>

@@ -20,8 +20,8 @@ import java.util.ArrayList;
 
 public final class JsonUtils {
 
-    private static final String POPULAR_VALUE = "popularity.desc";
-    private static final String RATING_VALUE = "vote_average.desc";
+    private static final String POPULAR_VALUE = "popular";
+    private static final String RATING_VALUE = "top_rated";
     private static final String FETCH_TRAILERS_VALUE = "trailers";
     private static final String FETCH_REVIEWS_VALUE = "reviews";
     private static String SEARCH_TYPE;
